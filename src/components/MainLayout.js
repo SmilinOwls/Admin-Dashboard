@@ -10,6 +10,7 @@ import { FaBloggerB, FaHotel } from 'react-icons/fa';
 import { MdBedroomParent, MdPlace } from 'react-icons/md';
 import { LuClipboardList } from 'react-icons/lu';
 import { BiCategory } from 'react-icons/bi';
+import {IoIosNotifications} from 'react-icons/io';
 
 import { Button, Layout, Menu, theme } from 'antd';
 const { Header, Sider, Content } = Layout;
@@ -23,7 +24,7 @@ function MainLayout() {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="logo">
-          {collapsed ? 
+          {collapsed ?
             <div className='text-white text-center py-3 fs-5'>B4T</div>
             :
             <div className='text-white text-center py-3 fs-5'>Booking4T</div>
@@ -88,6 +89,7 @@ function MainLayout() {
       </Sider>
       <Layout>
         <Header
+          className='d-flex justify-content-between ps-1 pe-3'
           style={{
             padding: 0,
             background: colorBgContainer,
@@ -103,19 +105,34 @@ function MainLayout() {
               height: 64,
             }}
           />
+         
+          <div className='admin-box-container'>
+            <div className="row">
+            <div className="col col-md-auto position-relative d-flex justify-content-end">
+                <IoIosNotifications className="fs-2 mt-4" />
+                <span className='badge bg-warning rounded-circle p-1 position-absolute' style={{top: '20px', right: '10px'}}>3</span>
+              </div>
+              <div className="col col-md-auto">
+                <UserOutlined className="fs-2" />
+              </div>
+              <div className="col col-md-auto">
+                <h6 className='mt-2'>Admin</h6>
+                <h6>admin01@gmail.com</h6>
+              </div>
+            </div>
+          </div>
         </Header>
         <Content
           style={{
             margin: '24px 16px',
             padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
+            minHeight: 280
           }}
         >
-          <Outlet/>
+          <Outlet />
         </Content>
       </Layout>
-    </Layout>
+    </Layout >
   );
 };
 

@@ -25,5 +25,17 @@ body{
 }
 
 .ant-layout{
-  min-height: 100vh;
+  min-height: 120vh;
+}
+
+header{
+  height: auto !important;
+}
+
+main{
+  overflow-y: scroll;
+}
+
+p{
+  margin-bottom: 0px;
 }
