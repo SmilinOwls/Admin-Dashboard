@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Navigate, Outlet } from 'react-router-dom'
+import { useNavigate, Outlet } from 'react-router-dom'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -16,7 +16,8 @@ import { Button, Layout, Menu, theme } from 'antd';
 const { Header, Sider, Content } = Layout;
 
 function MainLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false)
+  const navigate = useNavigate();;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -38,7 +39,7 @@ function MainLayout() {
             if (key === "signout") {
 
             } else {
-              Navigate(key);
+              navigate(key);
             }
           }}
           items={[
@@ -80,7 +81,7 @@ function MainLayout() {
               label: 'Blog',
             },
             {
-              key: 'order',
+              key: 'book',
               icon: <LuClipboardList className="fs-4" />,
               label: 'Order',
             },
