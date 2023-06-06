@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table } from 'antd';
 
-function Order() {
+function Blog() {
     const columns = [
         {
             title: "SNo",
@@ -37,10 +37,10 @@ function Order() {
     }
     return (
         <div className='mt-3'>
-            <h3 className='my-2'>Order List</h3>
+            <h3 className='my-2'>Blog List</h3>
             <Table columns={columns} dataSource={data_} />
         </div>
     )
 }
 
-export default Order
+export default Blog
