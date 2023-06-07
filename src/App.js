@@ -7,6 +7,7 @@ import MainLayout from './components/MainLayout';
 import Login from './pages/Login';
 import Order from './pages/Order';
 import Blog from './pages/Blog';
+import User from './pages/User';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/admin' element={<MainLayout />}>
           <Route index element={<Dashboard/>}/>
+          <Route path='user' element={<User/>}/>
           <Route path='book' element={<Order/>}/>
           <Route path='blog' element={<Blog/>}/>
         </Route>
