@@ -9,6 +9,7 @@ function BlogSummary({ formData, handleChange }) {
         wrapperCol: { span: 10 },
     };
     const onFinish = (values) => {
+        // connenct to API here
         console.log('Success:', values);
     };
     return (

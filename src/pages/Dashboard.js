@@ -125,38 +125,38 @@ function Dashboard() {
       <div className='d-flex justify-content-between align-content-center gap-3'>
         <div className='d-flex flex-grow-1 justify-content-between align-o bg-white p-3 rounded-3 p-3'>
           <div>
-            <p>Total</p> <h4>$1100</h4>
+            <p>Total</p> <h4 className='sub-title'>$1100</h4>
           </div>
           <div className="d-flex flex-column align-items-end">
             <h6 style={{ color: 'red' }}><BsArrowDownRight /> 32%</h6>
-            <p>Compared to April 2023</p>
+            <p className='desc'>Compared to April 2023</p>
           </div>
         </div>
         <div className='d-flex flex-grow-1 justify-content-between align-o bg-white p-3 rounded-3 p-3'>
           <div>
-            <p>Total</p> <h4>$1100</h4>
+            <p>Total</p> <h4 className='sub-title'>$1100</h4>
           </div>
           <div className="d-flex flex-column align-items-end">
             <h6 style={{ color: 'green' }}> <BsArrowUpRight /> 32%</h6>
-            <p>Compared to April 2023</p>
+            <p className='desc'>Compared to April 2023</p>
           </div>
         </div>
         <div className='d-flex flex-grow-1 justify-content-between align-o bg-white p-3 rounded-3 p-3'>
           <div>
-            <p>Total</p> <h4>$1100</h4>
+            <p>Total</p> <h4 className='sub-title'>$1100</h4>
           </div>
           <div className="d-flex flex-column align-items-end">
             <h6 style={{ color: 'red' }}><BsArrowDownRight /> 32%</h6>
-            <p>Compared to April 2023</p>
+            <p className='desc'>Compared to April 2023</p>
           </div>
         </div>
       </div>
       <div className='mt-3'>
-        <h3 className='my-2'>Income Statistic</h3>
+        <h3 className='my-2 title'>Income Statistics</h3>
         <Column {...config} />
       </div>
       <div className='mt-3'>
-        <h3 className='my-2'>Recent Orders</h3>
+        <h3 className='my-2 title'>Recent Orders</h3>
         <Table columns={columns} dataSource={data_}/>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate, Outlet } from 'react-router-dom'
+import { useNavigate, Outlet, Link } from 'react-router-dom'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -10,7 +10,7 @@ import { FaBloggerB, FaHotel } from 'react-icons/fa';
 import { MdBedroomParent, MdPlace } from 'react-icons/md';
 import { LuClipboardList } from 'react-icons/lu';
 import { BiCategory } from 'react-icons/bi';
-import {IoIosNotifications} from 'react-icons/io';
+import { IoIosNotifications } from 'react-icons/io';
 
 import { Button, Layout, Menu, theme } from 'antd';
 const { Header, Sider, Content } = Layout;
@@ -106,12 +106,12 @@ function MainLayout() {
               height: 64,
             }}
           />
-         
+
           <div className='admin-box-container'>
             <div className="row">
-            <div className="col col-md-auto position-relative d-flex justify-content-end">
+              <div className="col col-md-auto position-relative d-flex justify-content-end" style={{ cursor: 'pointer' }}>
                 <IoIosNotifications className="fs-2 mt-4" />
-                <span className='badge bg-warning rounded-circle p-1 position-absolute' style={{top: '20px', right: '10px'}}>3</span>
+                <span className='badge bg-warning rounded-circle p-1 position-absolute' style={{ top: '20px', right: '10px' }}>3</span>
               </div>
               <div className="col col-md-auto">
                 <UserOutlined className="fs-2" />
@@ -119,6 +119,30 @@ function MainLayout() {
               <div className="col col-md-auto">
                 <h6 className='mt-2'>Admin</h6>
                 <h6>admin01@gmail.com</h6>
+              </div>
+              <div className='col col-md-auto dropdown'>
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                </button>
+                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li>
+                    <Link
+                      className="dropdown-item py-1 mb-1 z-2"
+                      style={{ height: "auto", lineHeight: "20px" }}
+                      to="/"
+                    >
+                      View Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item py-1 mb-1 z-2"
+                      style={{ height: "auto", lineHeight: "20px" }}
+                      to="/"
+                    >
+                      Signout
+                    </Link>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
