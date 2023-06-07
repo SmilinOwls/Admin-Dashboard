@@ -1,0 +1,12 @@
+.previous {
+    background-color: #fff !important;
+    color: #ffd333;
+    border: 1px solid #ffd333;
+    min-width: 85px !important;
+  }
+  
+.next, .add {
+    background-color: #ffd333 !important;
+    color: #fff;
+    min-width: 85px !important;
+}
