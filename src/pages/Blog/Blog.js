@@ -1,39 +1,210 @@
 import React, { useState } from 'react'
-import CustomInput from '../../components/CustomInput';
-import { Table } from 'antd';
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
+import { UploadOutlined } from '@ant-design/icons';
+import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button } from 'antd';
 import AddBlog from './AddBlog';
 
 function Blog() {
+    const [form] = Form.useForm();
     const [isAdd, setIsAdd] = useState(false);
+    const [data, setData] = useState([{
+        key: 1,
+        title: `Hotel Blog`,
+        content: '<b>Hotel Blog</b>',
+        img: [{
+            uid: '-1',
+            name: 'image.png',
+            status: 'done',
+            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        }],
+    }]);
+    const [editingKey, setEditingKey] = useState('');
+    const isEditing = (record) => record.key === editingKey;
+    const edit = (record) => {
+        form.setFieldsValue({
+            title: '',
+            content: '',
+            ...record,
+        });
+        setEditingKey(record.key);
+    };
+    const cancel = () => {
+        setEditingKey('');
+    };
+    const save = async (key) => {
+        try {
+            const row = await form.validateFields();
+            const newData = [...data];
+            const index = newData.findIndex((item) => key === item.key);
+            if (index > -1) {
+                const item = newData[index];
+                newData.splice(index, 1, {
+                    ...item,
+                    ...row,
+                });
+                setData(newData);
+                setEditingKey('');
+            } else {
+                newData.push(row);
+                setData(newData);
+                setEditingKey('');
+            }
+        } catch (errInfo) {
+            console.log('Validate Failed:', errInfo);
+        }
 
+    };
+    const handleDelete = (key) => {
+        const newData = data.filter((item) => item.key !== key);
+        setData(newData);
+    };
+    const normfile = (e) => {
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e && e.fileList;
+    };
+    const EditableCell = ({
+        editing,
+        dataIndex,
+        title,
+        record,
+        index,
+        children,
+        ...restProps
+    }) => {
+        var inputNode = <Input />;
+        switch (dataIndex) {
+            case "content":
+                inputNode = <ReactQuill />;
+                break;
+            case "img":
+                inputNode =
+                    <Upload
+                        listType="picture-card"
+                        beforeUpload={() => false}
+                    >
+                        <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>;
+                break;
+            default:
+                break;
+        }
+
+        return (
+            <td {...restProps}>
+                {editing ? (
+                    <Form.Item
+                        name={dataIndex}
+                        style={{
+                            margin: 0,
+                        }}
+                        getValueFromEvent={dataIndex === "img" ? normfile : null}
+                        valuePropName={dataIndex === "img" ? "fileList" : "value"}
+                        rules={[
+                            {
+                                required: true,
+                                message: `Please Input ${title}!`,
+                            },
+                        ]}
+                    >
+                        {inputNode}
+                    </Form.Item>
+                ) : (
+                    children
+                )}
+            </td>
+        );
+    };
     const columns = [
         {
             title: "SNo",
             dataIndex: "key",
+            width: "10%"
         },
         {
             title: "Title",
             dataIndex: "title",
+            editable: true,
+            width: "20%"
         },
         {
             title: "Content",
             dataIndex: "content",
+            editable: true,
+            width: "30%"
         },
         {
             title: "Image",
             dataIndex: "img",
+            editable: true,
+            width: "25%",
+            render: (imgs, _) => {
+
+                return (
+                    <div className='row'>
+                        {imgs.map((img, idx) =>
+                            <div className='col-3 me-2'>
+                                <Image className='me-2' key={idx} width={50} height={50} src={img.thumbUrl} />
+                            </div>)}
+                    </div>
+                )
+            }
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            render: (_, record) => {
+                const editable = isEditing(record);
+                return editable ? (
+                    <span className='row'>
+                        <Typography.Link
+                            onClick={() => save(record.key)}
+                            style={{
+                                marginRight: 8,
+                            }}
+                        >
+                            Save
+                        </Typography.Link>
+                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                            <a>Cancel</a>
+                        </Popconfirm>
+                    </span>
+                ) : (
+                    <span>
+                        {data.length >= 1 ? (
+                            <>
+                                <span className='row'>
+                                    <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                                        Edit
+                                    </Typography.Link>
+                                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                                        <a className='text-primary text-decoration-none me-2'>Delete</a>
+                                    </Popconfirm>
+                                </span>
+                            </>
+                        ) : null}
+                    </span>
+                );
+            },
         },
     ];
+    const mergedColumns = columns.map((col) => {
+        if (!col.editable) {
+            return col;
+        }
+        return {
+            ...col,
+            onCell: (record) => ({
+                record,
+                dataIndex: col.dataIndex,
+                title: col.title,
+                editing: isEditing(record),
+            }),
+        };
+    });
 
-    const data_ = [];
-    for (let i = 0; i < 28; i++) {
-        data_.push({
-            key: i,
-            title: `Customer ${i}`,
-            content: `STD102`,
-            img: `$ ${i}`,
-        });
-    }
     return (
         <div className='mt-3'>
             {!isAdd ? (
@@ -42,7 +213,22 @@ function Blog() {
                         <h3 className='my-2'>Blog List</h3>
                         <button className='btn btn-primary rounded-3' onClick={() => setIsAdd(!isAdd)}>Add Blog</button>
                     </div>
-                    <Table columns={columns} dataSource={data_} />
+                    <Form form={form} component={false}>
+                        <Table
+                            components={{
+                                body: {
+                                    cell: EditableCell,
+                                },
+                            }}
+                            bordered
+                            dataSource={data}
+                            columns={mergedColumns}
+                            rowClassName="editable-row"
+                            pagination={{
+                                onChange: cancel,
+                            }}
+                        />
+                    </Form>
                 </>
             ) : <AddBlog />}
         </div>

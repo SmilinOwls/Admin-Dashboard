@@ -3,7 +3,6 @@ import BlogDetail from "./BlogDetail";
 import ImageBlog from "./ImageBlog";
 import BlogSummary from "./BlogSummary";
 import CustomStepper from "../../components/CustomStepper";
-import {Upload} from 'antd';
 
 
 function AddBlog() {

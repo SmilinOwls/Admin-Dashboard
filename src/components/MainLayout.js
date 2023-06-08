@@ -121,14 +121,14 @@ function MainLayout() {
                 <h6>admin01@gmail.com</h6>
               </div>
               <div className='col col-md-auto dropdown'>
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                   <li>
                     <Link
                       className="dropdown-item py-1 mb-1 z-2"
                       style={{ height: "auto", lineHeight: "20px" }}
-                      to="/"
+                      to="/admin"
                     >
                       View Profile
                     </Link>
@@ -137,7 +137,7 @@ function MainLayout() {
                     <Link
                       className="dropdown-item py-1 mb-1 z-2"
                       style={{ height: "auto", lineHeight: "20px" }}
-                      to="/"
+                      to="/signout"
                     >
                       Signout
                     </Link>
