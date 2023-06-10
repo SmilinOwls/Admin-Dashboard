@@ -1,15 +1,134 @@
 import React, { useState } from 'react'
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
-import { UploadOutlined } from '@ant-design/icons';
-import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button } from 'antd';
+import { UploadOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space } from 'antd';
+import Highlighter from 'react-highlight-words';
 import AddBlog from './AddBlog';
 
 function Blog() {
+    // Search 
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+    const handleReset = (confirm, clearFilters) => {
+        clearFilters();
+        setSearchText('');
+        confirm();
+    };
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => {
+            return (
+                <div
+                    style={{
+                        padding: 8,
+                    }}
+                    onKeyDown={(e) => e.stopPropagation()}
+                >
+                    <Input
+                        placeholder={`Search ${dataIndex}`}
+                        value={selectedKeys[0]}
+                        onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        style={{
+                            marginBottom: 8,
+                            display: 'block',
+                        }}
+                    />
+                    <Space>
+                        <Button
+                            type="primary"
+                            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                            icon={<SearchOutlined />}
+                            size="small"
+                            style={{
+                                width: 90,
+                            }}
+                        >
+                            Search
+                        </Button>
+                        <Button
+                            onClick={() => clearFilters && handleReset(confirm, clearFilters)}
+                            size="small"
+                            style={{
+                                width: 90,
+                            }}
+                        >
+                            Reset
+                        </Button>
+                        <Button
+                            type="link"
+                            size="small"
+                            onClick={() => {
+                                close();
+                            }}
+                        >
+                            Close
+                        </Button>
+                    </Space>
+                </div>
+            )
+        },
+        filterIcon: (filtered) => {
+            return (
+                <SearchOutlined
+                    style={{
+                        color: filtered ? '#1677ff' : undefined,
+                    }}
+                />
+            )
+        },
+        onFilter: (value, record) => {
+            return record[dataIndex].toString().toLowerCase().includes(value.toLowerCase());
+        },
+        render: (text) => {
+            return (
+                searchedColumn == dataIndex ?
+                    <Highlighter
+                        highlightStyle={{
+                            backgroundColor: '#ffc069',
+                            padding: 0,
+                        }}
+                        searchWords={[searchText]}
+                        autoEscape
+                        textToHighlight={text ? text.toString() : ''}
+                    /> : <div dangerouslySetInnerHTML={{ __html: text }} ></div>
+            )
+        }
+
+    });
+
     const [form] = Form.useForm();
     const [isAdd, setIsAdd] = useState(false);
     const [data, setData] = useState([{
         key: 1,
+        title: `Hotel Blog`,
+        content: '<b>Hotel Blog</b>',
+        img: [{
+            uid: '-1',
+            name: 'image.png',
+            status: 'done',
+            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        }],
+    },
+    {
+        key: 2,
+        title: `Hotel Blog`,
+        content: '<b>Hotel Blog</b>',
+        img: [{
+            uid: '-1',
+            name: 'image.png',
+            status: 'done',
+            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        }],
+    },
+    {
+        key: 3,
         title: `Hotel Blog`,
         content: '<b>Hotel Blog</b>',
         img: [{
@@ -127,13 +246,15 @@ function Blog() {
             title: "Title",
             dataIndex: "title",
             editable: true,
-            width: "20%"
+            width: "20%",
+            ...getColumnSearchProps('title')
         },
         {
             title: "Content",
             dataIndex: "content",
             editable: true,
-            width: "30%"
+            width: "30%",
+            ...getColumnSearchProps('content')
         },
         {
             title: "Image",
@@ -141,7 +262,6 @@ function Blog() {
             editable: true,
             width: "25%",
             render: (imgs, _) => {
-
                 return (
                     <div className='row'>
                         {imgs.map((img, idx) =>
@@ -153,8 +273,10 @@ function Blog() {
             }
         },
         {
-            title: 'Action',
-            dataIndex: 'action',
+            title: 'Operation',
+            dataIndex: 'operation',
+            colSpan: 2,
+            width: "8%",
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -175,13 +297,10 @@ function Blog() {
                     <span>
                         {data.length >= 1 ? (
                             <>
-                                <span className='row'>
+                                <span className='d-flex justify-content-center'>
                                     <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
                                         Edit
                                     </Typography.Link>
-                                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                                        <a className='text-primary text-decoration-none me-2'>Delete</a>
-                                    </Popconfirm>
                                 </span>
                             </>
                         ) : null}
@@ -189,6 +308,18 @@ function Blog() {
                 );
             },
         },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            colSpan: 0,
+            render: (_, record) => {
+                return (
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                        <a className='text-primary text-decoration-none me-2'>Delete</a>
+                    </Popconfirm>
+                )
+            }
+        }
     ];
     const mergedColumns = columns.map((col) => {
         if (!col.editable) {
@@ -204,6 +335,8 @@ function Blog() {
             }),
         };
     });
+
+
 
     return (
         <div className='mt-3'>

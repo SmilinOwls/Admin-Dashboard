@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Checkbox, Form, Input, Image } from 'antd';
+import { Button, Form, Input, Image } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 function BlogSummary({ formData, handleChange }) {

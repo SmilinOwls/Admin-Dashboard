@@ -53,7 +53,7 @@ function AddBlog() {
         { (activeStep !== 0)
             && <button className="btn mt-3 me-2 previous" onClick={ () => setActiveStep(activeStep - 1) }>Previous</button>
         }
-        { (activeStep !== steps.length - 1) && <button disabled={formData.title === ""} className="btn mt-3 ms-2 next" onClick={ () => setActiveStep(activeStep + 1) }>
+        { (activeStep !== steps.length - 1) && <button disabled={formData.title === "" || formData.content === ""} className="btn mt-3 ms-2 next" onClick={ () => setActiveStep(activeStep + 1) }>
           Next </button>
         }
        
