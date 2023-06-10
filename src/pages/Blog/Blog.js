@@ -107,7 +107,7 @@ function Blog() {
     const [isAdd, setIsAdd] = useState(false);
     const [data, setData] = useState([{
         key: 1,
-        title: `Hotel Blog`,
+        title: `A`,
         content: '<b>Hotel Blog</b>',
         img: [{
             uid: '-1',
@@ -118,7 +118,7 @@ function Blog() {
     },
     {
         key: 2,
-        title: `Hotel Blog`,
+        title: `B`,
         content: '<b>Hotel Blog</b>',
         img: [{
             uid: '-1',
@@ -129,7 +129,7 @@ function Blog() {
     },
     {
         key: 3,
-        title: `Hotel Blog`,
+        title: `C`,
         content: '<b>Hotel Blog</b>',
         img: [{
             uid: '-1',
@@ -247,6 +247,8 @@ function Blog() {
             dataIndex: "title",
             editable: true,
             width: "20%",
+            sorter: (a, b) => a.title.localeCompare(b.title),
+            sortDirections: ['descend', 'ascend'],
             ...getColumnSearchProps('title')
         },
         {
