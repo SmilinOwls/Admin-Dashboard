@@ -88,7 +88,7 @@ function Blog() {
         },
         render: (text) => {
             return (
-                searchedColumn == dataIndex ?
+                searchedColumn === dataIndex ?
                     <Highlighter
                         highlightStyle={{
                             backgroundColor: '#ffc069',
@@ -292,7 +292,7 @@ function Blog() {
                             Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a>Cancel</a>
+                        <span style={{cursor: "pointer"}}>Cancel</span>
                         </Popconfirm>
                     </span>
                 ) : (
@@ -301,7 +301,7 @@ function Blog() {
                             <>
                                 <span className='d-flex justify-content-center'>
                                     <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                        Edit
+                                    <span style={{cursor: "pointer"}}>Edit</span>
                                     </Typography.Link>
                                 </span>
                             </>
@@ -317,7 +317,7 @@ function Blog() {
             render: (_, record) => {
                 return (
                     <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                        <a className='text-primary text-decoration-none me-2'>Delete</a>
+                        <span className='text-primary' style={{cursor: "pointer"}}>Delete</span>
                     </Popconfirm>
                 )
             }
