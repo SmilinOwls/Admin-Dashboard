@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined, SearchOutlined } from '@ant-design/icons';
-import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, InputNumber } from 'antd';
+import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, InputNumber, Rate } from 'antd';
 import Highlighter from 'react-highlight-words';
 import AddPlace from './AddPlace';
 
@@ -117,6 +117,7 @@ function Place() {
             thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         }],
         description: 'Description I',
+        addition: 'Addition I',
         rating: 4,
     },
     {
@@ -131,6 +132,7 @@ function Place() {
             thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         }],
         description: 'Description II',
+        addition: 'Addition II',
         rating: 5,
     },
     ]);
@@ -192,7 +194,7 @@ function Place() {
         var inputNode = <Input />;
         switch (dataIndex) {
             case "rating":
-                inputNode = <InputNumber />;
+                inputNode = <Rate />;
                 break;
             case "img":
                 inputNode =
@@ -236,7 +238,7 @@ function Place() {
         {
             title: "SNo",
             dataIndex: "key",
-            width: "10%"
+            width: "5%"
         },
         {
             title: "Name",
@@ -265,7 +267,7 @@ function Place() {
             title: "Image",
             dataIndex: "img",
             editable: true,
-            width: "25%",
+            width: "20%",
             render: (imgs, _) => {
                 return (
                     <div className='row'>
@@ -314,7 +316,17 @@ function Place() {
             ],
             onFilter: (value, record) => {
                 return record.rating === value;
-            }
+            },
+            render: (value) => (
+                <Rate value={value} className='fs-5'/>
+            )
+        },
+        {
+            title: "Addition",
+            dataIndex: "addition",
+            editable: true,
+            width: "10%",
+            ...getColumnSearchProps('addition')
         },
         {
             title: 'Operation',

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
-import { Form, Input, Upload, Rate, Button } from 'antd';
+import { Form, Input, Upload, Rate, Button, Modal, Row, Col, Image } from 'antd';
 
 function AddPlace() {
     const [form] = Form.useForm();
@@ -13,6 +13,7 @@ function AddPlace() {
         addition: '',
         rating: ''
     });
+    const [isModal, setModal] = useState(false);
 
     const formItemLayout = {
         labelCol: {
@@ -20,7 +21,7 @@ function AddPlace() {
                 span: 24
             },
             sm: {
-                span: 8
+                span: 5
             }
         },
 
@@ -41,7 +42,7 @@ function AddPlace() {
             },
             sm: {
                 span: 16,
-                offset: 8
+                offset: 5
             }
         }
     };
@@ -54,14 +55,25 @@ function AddPlace() {
         return e?.fileList;
     };
 
+    const anotherHandle = () => {
+        form.resetFields();
+        setModal(false);
+    };
+
     const onFinish = (values) => {
+        setModal(true);
         console.log('Received values of form: ', values);
-        setFormData({...values});
+        setFormData({ ...values });
+
+        //  axios handler goes here (POST)
     };
 
     return (
         <div className='container'>
+
             <h3 className="mb-3">Add A New Place</h3>
+            <div className='row'>
+            <div className='col-7'>
             <Form
                 {...formItemLayout}
                 form={form}
@@ -162,12 +174,35 @@ function AddPlace() {
                     <Input />
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
-                        Add
-                    </Button>
+                    <Row gutter={8}>
+                        <Col span={4}>
+                            <Button type="primary" htmlType="submit">
+                                Add
+                            </Button>
+                        </Col>
+                        <Col span={4}>
+                            <Button type="default" onClick={() => form.resetFields()}>
+                                Reset
+                            </Button>
+                        </Col>
+                    </Row>
+
                 </Form.Item>
             </Form>
-
+            </div>
+            <Image className='col-5' style={{mixBlendMode: "multiply"}}  width={420} src='https://img.freepik.com/free-vector/lifestyle-hotel-illustration_335657-398.jpg?w=2000'/>
+            </div>
+            
+            <Modal title="System Message" open={isModal} footer={[
+                <Button href='/admin/place' key="link">
+                    Return
+                </Button>,
+                <Button key="another" onClick={anotherHandle} type="primary">Add A New One</Button>,
+            ]}
+            >
+                <p>Add New Place Successfully..</p>
+                <p>Come back to the list to see any changes or continue to add another one!</p>
+            </Modal>
         </div>
     )
 }
