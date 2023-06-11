@@ -173,10 +173,14 @@ function Blog() {
             console.log('Validate Failed:', errInfo);
         }
 
+        // axios handler goes here (PUT)
+
     };
     const handleDelete = (key) => {
         const newData = data.filter((item) => item.key !== key);
         setData(newData);
+
+        // axios handler goes here (DELETE)
     };
     const normfile = (e) => {
         if (Array.isArray(e)) {
