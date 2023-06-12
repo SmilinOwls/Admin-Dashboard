@@ -193,7 +193,7 @@ function AddPlace() {
             <Image className='col-5' style={{mixBlendMode: "multiply"}}  width={420} src='https://img.freepik.com/free-vector/lifestyle-hotel-illustration_335657-398.jpg?w=2000'/>
             </div>
             
-            <Modal title="System Message" open={isModal} footer={[
+            <Modal title="System Message" open={isModal} onCancel={() => setModal(false)} footer={[
                 <Button href='/admin/place' key="link">
                     Return
                 </Button>,

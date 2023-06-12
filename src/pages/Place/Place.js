@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import 'react-quill/dist/quill.snow.css';
-import { UploadOutlined, SearchOutlined } from '@ant-design/icons';
+import { UploadOutlined, SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, InputNumber, Rate } from 'antd';
 import Highlighter from 'react-highlight-words';
 import AddPlace from './AddPlace';
@@ -249,7 +249,7 @@ function Place() {
             dataIndex: "name",
             editable: true,
             width: "10%",
-            sorter: (a, b) => a.title.localeCompare(b.title),
+            sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['descend', 'ascend'],
             ...getColumnSearchProps('name')
         },
@@ -257,7 +257,7 @@ function Place() {
             title: "Address",
             dataIndex: "address",
             editable: true,
-            width: "15%",
+            width: "10%",
             ...getColumnSearchProps('content')
         },
         {
@@ -287,14 +287,14 @@ function Place() {
             title: "Description",
             dataIndex: "description",
             editable: true,
-            width: "15%",
+            width: "10%",
             ...getColumnSearchProps('description')
         },
         {
             title: "Rating",
             dataIndex: "rating",
             editable: true,
-            width: "5%",
+            width: "10%",
             sorter: (a, b) => a.rating > b.rating,
             sortDirections: ['ascend', 'descend'],
             filters: [{
@@ -336,6 +336,7 @@ function Place() {
             title: 'Operation',
             dataIndex: 'operation',
             colSpan: 2,
+            fixed: "right",
             width: "8%",
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -345,12 +346,13 @@ function Place() {
                             onClick={() => save(record.key)}
                             style={{
                                 marginRight: 8,
+                                textAlign: "center"
                             }}
                         >
                             Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <span style={{ cursor: "pointer" }}>Cancel</span>
+                            <span style={{ cursor: "pointer", textAlign: "center" }}>Cancel</span>
                         </Popconfirm>
                     </span>
                 ) : (
@@ -371,6 +373,7 @@ function Place() {
         {
             title: 'Action',
             dataIndex: 'action',
+            fixed: "right",
             colSpan: 0,
             render: (_, record) => {
                 return (
@@ -418,10 +421,24 @@ function Place() {
                             pagination={{
                                 onChange: cancel,
                             }}
+                            scroll={{
+                                x: 1500,
+                                y: 300,
+                            }}
                         />
                     </Form>
                 </>
-            ) : <AddPlace/>}
+            ) : (
+                <>
+                    <div
+                        className='text-primary mb-3 d-flex align-items-center'
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setIsAdd(false)}
+                    >
+                        <ArrowLeftOutlined /><span className='ms-2'>Back to Place List</span>
+                    </div>
+                    <AddPlace />
+                </>)}
         </div>
     )
 }

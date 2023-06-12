@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
-import { UploadOutlined, SearchOutlined } from '@ant-design/icons';
+import { UploadOutlined, SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import AddBlog from './AddBlog';
@@ -250,7 +250,7 @@ function Blog() {
             title: "Title",
             dataIndex: "title",
             editable: true,
-            width: "20%",
+            width: "10%",
             sorter: (a, b) => a.title.localeCompare(b.title),
             sortDirections: ['descend', 'ascend'],
             ...getColumnSearchProps('title')
@@ -266,7 +266,7 @@ function Blog() {
             title: "Image",
             dataIndex: "img",
             editable: true,
-            width: "25%",
+            width: "35%",
             render: (imgs, _) => {
                 return (
                     <div className='row'>
@@ -283,6 +283,7 @@ function Blog() {
             dataIndex: 'operation',
             colSpan: 2,
             width: "8%",
+            fixed: "right",
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -291,12 +292,13 @@ function Blog() {
                             onClick={() => save(record.key)}
                             style={{
                                 marginRight: 8,
+                                textAlign: "center"
                             }}
                         >
                             Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                        <span style={{cursor: "pointer"}}>Cancel</span>
+                        <span style={{cursor: "pointer", textAlign: "center"}}>Cancel</span>
                         </Popconfirm>
                     </span>
                 ) : (
@@ -317,6 +319,7 @@ function Blog() {
         {
             title: 'Action',
             dataIndex: 'action',
+            fixed: "right",
             colSpan: 0,
             render: (_, record) => {
                 return (
@@ -366,10 +369,24 @@ function Blog() {
                             pagination={{
                                 onChange: cancel,
                             }}
+                            scroll={{
+                                x: 1500,
+                                y: 300,
+                            }}
                         />
                     </Form>
                 </>
-            ) : <AddBlog />}
+            ) : (
+                <>
+                    <div
+                        className='text-primary mb-3 d-flex align-items-center'
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setIsAdd(false)}
+                    >
+                        <ArrowLeftOutlined /><span className='ms-2'>Back to Blog List</span>
+                    </div>
+                    <AddBlog />
+                </>)}
         </div>
     )
 }
