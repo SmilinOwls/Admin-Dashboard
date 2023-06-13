@@ -239,7 +239,24 @@ function Room() {
                                 required: true,
                                 message: `Please Input ${title}!`,
                             },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if ((
+                                            dayjs(getFieldValue('checkin')) &&
+                                            dayjs(getFieldValue('checkin')) > dayjs(value))
+                                        ||
+                                        (
+                                            dayjs(getFieldValue('checkout')) &&
+                                            dayjs(getFieldValue('checkout')) < dayjs(value)
+                                        )) {
+                                        return Promise.reject(new Error('The checkout date must be greater than checkin!'));
+                                    }
+
+                                    return Promise.resolve();
+                                },
+                            }),
                         ]}
+
                     >
                         {inputNode}
                     </Form.Item>
@@ -307,6 +324,8 @@ function Room() {
             dataIndex: "checkin",
             editable: true,
             width: "8%",
+            sorter: (a, b) => a.checkin > b.checkin,
+            sortDirections: ['ascend', 'descend'],
             render: (value, _) => {
                 return <p>{value.toDate().toLocaleString()}</p>
             }
@@ -316,6 +335,8 @@ function Room() {
             dataIndex: "checkout",
             editable: true,
             width: "8%",
+            sorter: (a, b) => a.checkout > b.checkout,
+            sortDirections: ['ascend', 'descend'],
             render: (value, _) => {
                 return <p>{value.toDate().toLocaleString()}</p>
             }
