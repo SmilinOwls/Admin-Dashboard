@@ -44,6 +44,25 @@ function User() {
     },
     ]);
 
+    const formItemLayout = {
+        labelCol: {
+            xs: {
+                span: 24
+            },
+            sm:{
+                span: 8
+            }
+        },
+        wrapperCol: {
+            xs: {
+                span: 24
+            },
+            sm:{
+                span: 16
+            }
+        },
+    };
+
     const updateHandle = () => {
         setConfirmLoading(true);
         setTimeout(() => {
@@ -51,6 +70,7 @@ function User() {
             setConfirmLoading(false);
             // axios handler goes here (PUT)
         }, 2000);
+        
     };
 
     const deleteHandle = (key) => {
@@ -102,8 +122,11 @@ function User() {
                 confirmLoading={confirmLoading}
             >
                 <Form
+                    {...formItemLayout}
                     form={form}
-                    style={{ width: 300 }}
+                    style={{ width: 430 }}
+                    onValuesChange={(value) => setCard({...card, ...value})}
+                    scrollToFirstError
                 >
                     <Form.Item
                         name="username"
