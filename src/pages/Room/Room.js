@@ -148,8 +148,6 @@ function Room() {
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
-            title: '',
-            content: '',
             ...record,
         });
         setEditingKey(record.key);
@@ -178,7 +176,7 @@ function Room() {
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
-
+        
         //  axios handler goes here (PUT)
 
     };
@@ -242,10 +240,12 @@ function Room() {
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
                                     if ((
+                                            dataIndex === "checkout" &&
                                             dayjs(getFieldValue('checkin')) &&
                                             dayjs(getFieldValue('checkin')) > dayjs(value))
                                         ||
                                         (
+                                            dataIndex === "checkin" &&
                                             dayjs(getFieldValue('checkout')) &&
                                             dayjs(getFieldValue('checkout')) < dayjs(value)
                                         )) {

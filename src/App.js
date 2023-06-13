@@ -10,7 +10,6 @@ import Blog from './pages/Blog/Blog';
 import User from './pages/User/User';
 import Place from './pages/Place/Place';
 import Room from './pages/Room/Room';
-import Site from './pages/Site/Site';
 
 function App() {
   return (
@@ -25,7 +24,6 @@ function App() {
           <Route path='book' element={<Order/>}/>
           <Route path='blog' element={<Blog/>}/>
           <Route path='place' element={<Place/>}/>
-          <Route path='site' element={<Site/>}/>
           <Route path='room' element={<Room/>}/>
         </Route>
       </Routes>

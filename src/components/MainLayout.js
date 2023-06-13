@@ -68,11 +68,6 @@ function MainLayout() {
                   icon: <MdBedroomParent className="fs-4" />,
                   label: 'Room'
                 },
-                {
-                  key: 'site',
-                  icon: <MdPlace className="fs-4" />,
-                  label: 'Site'
-                }
               ]
             },
             {
