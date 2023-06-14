@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -10,6 +10,7 @@ import Blog from './pages/Blog/Blog';
 import User from './pages/User/User';
 import Place from './pages/Place/Place';
 import Room from './pages/Room/Room';
+import OrderDetail from './pages/Order/OrderDetail';
 
 function App() {
   return (
@@ -19,12 +20,15 @@ function App() {
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/admin' element={<MainLayout />}>
-          <Route index element={<Dashboard/>}/>
-          <Route path='user' element={<User/>}/>
-          <Route path='book' element={<Order/>}/>
-          <Route path='blog' element={<Blog/>}/>
-          <Route path='place' element={<Place/>}/>
-          <Route path='room' element={<Room/>}/>
+          <Route index element={<Dashboard />} />
+          <Route path='user' element={<User />} />
+          <Route path='blog' element={<Blog />} />
+          <Route path='place' element={<Place />} />
+          <Route path='room' element={<Room />} />
+          <Route path='book' element={<Outlet />}>
+            <Route index element={<Order />} />
+            <Route path=':id' element={<OrderDetail />} />
+          </Route>
         </Route>
       </Routes>
     </Router>
