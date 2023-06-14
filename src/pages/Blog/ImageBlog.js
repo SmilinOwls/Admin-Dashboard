@@ -16,6 +16,7 @@ function ImageBlog({ formData, setFormData }) {
             <Upload
                 listType="picture-card"
                 fileList={formData.image}
+                accept=".png, .jpeg"
                 onPreview={(file) => { setImagePreview(file); setOpen(true); }}
                 beforeUpload={() => false}
                 onChange={handleUpload}

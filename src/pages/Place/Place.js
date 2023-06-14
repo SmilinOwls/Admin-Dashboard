@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined, SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, InputNumber, Rate } from 'antd';
+import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, Rate } from 'antd';
 import Highlighter from 'react-highlight-words';
 import AddPlace from './AddPlace';
 
@@ -203,6 +203,7 @@ function Place() {
             case "img":
                 inputNode =
                     <Upload
+                        accept=".png, .jpeg"
                         listType="picture-card"
                         beforeUpload={() => false}
                     >

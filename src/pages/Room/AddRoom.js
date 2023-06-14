@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InboxOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
 import { Form, Input, Upload, DatePicker, Button, Modal, Row, Col, Image, InputNumber } from 'antd';
 const { RangePicker } = DatePicker;
 
@@ -128,7 +128,9 @@ function AddPlace() {
                                 },
                             ]}
                         >
-                            <Upload.Dragger listType='picture'
+                            <Upload.Dragger 
+                                accept=".png, .jpeg"
+                                listType='picture'
                                 beforeUpload={() => false}>
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />

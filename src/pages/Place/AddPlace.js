@@ -120,6 +120,7 @@ function AddPlace() {
                 <Form.Item
                     name="image"
                     label="Image"
+                    accept=".png, .jpeg"
                     valuePropName='fileList'
                     getValueFromEvent={normFile}
                     rules={[

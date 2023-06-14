@@ -212,6 +212,7 @@ function Room() {
             case "img":
                 inputNode =
                     <Upload
+                        accept=".png, .jpeg"
                         listType="picture-card"
                         beforeUpload={() => false}
                     >

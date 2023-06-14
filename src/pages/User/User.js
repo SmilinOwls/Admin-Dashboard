@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
-import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button } from 'antd';
+import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button, Select, Tag } from 'antd';
 
 const { Meta } = Card;
 
 function User() {
     const [form] = Form.useForm();
     const [card, setCard] = useState({});
+    const [disabled, setDisabled] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [data, setData] = useState([{
@@ -15,6 +16,7 @@ function User() {
         email: 'email1@gmail.com',
         password: 'password1',
         phone: '0812431293',
+        role: 'admin',
         img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
 
     },
@@ -24,6 +26,7 @@ function User() {
         email: 'email2@gmail.com',
         password: 'password1',
         phone: '0812431213',
+        role: 'user',
         img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
     },
     {
@@ -32,6 +35,7 @@ function User() {
         email: 'email3@gmail.com',
         password: 'password1',
         phone: '0812431213',
+        role: 'user',
         img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
     },
     {
@@ -40,6 +44,7 @@ function User() {
         email: 'email4@gmail.com',
         password: 'password1',
         phone: '0812431213',
+        role: 'admin',
         img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
     },
     ]);
@@ -72,6 +77,13 @@ function User() {
     };
 
     const updateHandle = () => {
+
+        // if it's just to see user info
+        if(disabled) {
+            setShowModal(false);
+            return;
+        }
+
         setConfirmLoading(true);
         setTimeout(() => {
             setShowModal(false);
@@ -80,20 +92,17 @@ function User() {
         }, 2000);
         const newData = [...data];
         const index = newData.findIndex((item) => card.key === item.key);
-        console.log(index);
         if (index > -1) {
             const item = newData[index];
             newData.splice(index, 1, {
                 ...item,
                 ...card,
             });
-            console.log(newData);
             setData(newData);
         } else {
             newData.push(card);
             setData(newData);
         }
-        console.log(card);
     };
 
     const deleteHandle = (key) => {
@@ -113,13 +122,30 @@ function User() {
                         <Card
                             style={{ width: 270 }}
                             hoverable
-                            actions={[
-                                <EditOutlined onClick={() => {
-                                    setShowModal(true);
+                            onDoubleClick={() => {
+                                try {
                                     setCard({ ...item });
+                                    setDisabled(true);
                                     form.setFieldsValue({
                                         ...item,
                                     });
+                                } catch (error) {
+
+                                }
+                                setShowModal(true);
+                            }}
+                            actions={[
+                                <EditOutlined onClick={() => {
+                                    try {
+                                        setCard({ ...item });
+                                        setDisabled(false);
+                                        form.setFieldsValue({
+                                            ...item,
+                                        });
+                                    } catch (e) {
+
+                                    }
+                                    setShowModal(true);
                                 }} />,
                                 <Popconfirm title="Sure to delete?" onConfirm={() => deleteHandle(item.key)}>
                                     <span style={{ cursor: "pointer" }}><DeleteOutlined /></span>
@@ -130,7 +156,9 @@ function User() {
                                 avatar={<Avatar src={item.img[0].thumbUrl || URL.createObjectURL(item.img[0].originFileObj)} />}
                                 title={item.username}
                                 description={item.email}
-                            />
+                            >
+                            </Meta>
+                            <Tag color={item.role === "admin" ? "gold" : "blue"} className="ms-5 mt-2" key={item.key}>{item.role.toUpperCase()}</Tag>
                         </Card>
                     </List.Item>
                 )}
@@ -138,7 +166,7 @@ function User() {
             </List>
             <Modal
                 mask={false}
-                title="User Updating"
+                title={disabled ? "User Info": "User Updating"}
                 open={showModal}
                 onOk={updateHandle}
                 onCancel={() => setShowModal(false)}
@@ -150,11 +178,12 @@ function User() {
                     style={{ width: 430 }}
                     onValuesChange={(value) => {
                         if (value.img && value.img.length !== 0) {
-                            setCard({...card, img: [{...value.img[0]}]})
+                            setCard({ ...card, img: [{ ...value.img[0] }] })
                         } else {
                             setCard({ ...card, ...value });
                         }
                     }}
+                    disabled={disabled}
                     scrollToFirstError
                 >
                     <Form.Item
@@ -204,6 +233,16 @@ function User() {
                         rules={[{ required: true, message: 'Please input your Phone number!' }]}
                     >
                         <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="role"
+                        label="Role"
+                        rules={[{ required: true, message: 'Please select your Role!' }]}
+                    >
+                        <Select>
+                            <Select.Option value="admin">Admin</Select.Option>
+                            <Select.Option value="user">User</Select.Option>
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         name="img"
