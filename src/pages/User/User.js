@@ -1,8 +1,46 @@
-import React, { useState } from 'react'
-import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
-import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button, Select, Tag } from 'antd';
+import React, { useState, useEffect } from 'react'
+import { EditOutlined, DeleteOutlined, UploadOutlined, SearchOutlined } from '@ant-design/icons';
+import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button, Select, Tag, Row, Col } from 'antd';
 
 const { Meta } = Card;
+const dataSource = [{
+    key: 1,
+    username: `Name I`,
+    email: 'email1@gmail.com',
+    password: 'password1',
+    phone: '0812431293',
+    role: 'admin',
+    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
+
+},
+{
+    key: 2,
+    username: `Name II`,
+    email: 'email2@gmail.com',
+    password: 'password1',
+    phone: '0812431213',
+    role: 'user',
+    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
+},
+{
+    key: 3,
+    username: `Name III`,
+    email: 'email3@gmail.com',
+    password: 'password1',
+    phone: '0812431213',
+    role: 'user',
+    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
+},
+{
+    key: 4,
+    username: `Name IV`,
+    email: 'email4@gmail.com',
+    password: 'password1',
+    phone: '0812431213',
+    role: 'admin',
+    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
+},
+];
 
 function User() {
     const [form] = Form.useForm();
@@ -10,44 +48,10 @@ function User() {
     const [disabled, setDisabled] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [data, setData] = useState([{
-        key: 1,
-        username: `Name I`,
-        email: 'email1@gmail.com',
-        password: 'password1',
-        phone: '0812431293',
-        role: 'admin',
-        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-
-    },
-    {
-        key: 2,
-        username: `Name II`,
-        email: 'email2@gmail.com',
-        password: 'password1',
-        phone: '0812431213',
-        role: 'user',
-        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-    },
-    {
-        key: 3,
-        username: `Name III`,
-        email: 'email3@gmail.com',
-        password: 'password1',
-        phone: '0812431213',
-        role: 'user',
-        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-    },
-    {
-        key: 4,
-        username: `Name IV`,
-        email: 'email4@gmail.com',
-        password: 'password1',
-        phone: '0812431213',
-        role: 'admin',
-        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-    },
-    ]);
+    const [inputValue, setInputValue] = useState('');
+    const [role, setRole] = useState('all');
+    const [data, setData] = useState(dataSource);
+    const [dataClone, setDataClone] = useState(dataSource);
 
     const formItemLayout = {
         labelCol: {
@@ -79,7 +83,7 @@ function User() {
     const updateHandle = () => {
 
         // if it's just to see user info
-        if(disabled) {
+        if (disabled) {
             setShowModal(false);
             return;
         }
@@ -88,21 +92,21 @@ function User() {
         setTimeout(() => {
             setShowModal(false);
             setConfirmLoading(false);
+            const newData = [...data];
+            const index = newData.findIndex((item) => card.key === item.key);
+            if (index > -1) {
+                const item = newData[index];
+                newData.splice(index, 1, {
+                    ...item,
+                    ...card,
+                });
+
+            } else {
+                newData.push(card);
+            }
+            setData(newData);
             // axios handler goes here (PUT)
         }, 2000);
-        const newData = [...data];
-        const index = newData.findIndex((item) => card.key === item.key);
-        if (index > -1) {
-            const item = newData[index];
-            newData.splice(index, 1, {
-                ...item,
-                ...card,
-            });
-            setData(newData);
-        } else {
-            newData.push(card);
-            setData(newData);
-        }
     };
 
     const deleteHandle = (key) => {
@@ -111,12 +115,55 @@ function User() {
         // axios handler goes here (DELETE)
     };
 
+    useEffect(() => {
+        handleChange(role);
+    }, [data]);
+
+    useEffect(() => {
+        if (inputValue) {
+            const newData = [...data];
+            setData(newData.filter((item) => item.username.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1))
+        }
+    }, [inputValue]);
+
+    const onSearch = (e) => {
+        console.log(e.target.value)
+        setInputValue(e.target.value);
+    };
+
+    const handleChange = (value) => {
+        setRole(value);
+        setDataClone(value === "all" ? [...data] : data.filter((item) => item.role === value));
+    };
+
     return (
         <div className='mt-3'>
             <h3 className='my-2'>User List</h3>
+            <Row style={{ width: '100%' }} className="mt-3 align-items-center">
+                <Col span={2}><b>Search: </b> </Col>
+                <Col span={4}>
+                    <Input
+                        placeholder="input search text"
+                        onChange={e => onSearch(e)}
+                        suffix={<SearchOutlined />}
+                    />
+                </Col>
+                <Col span={2} className="ms-3"><b>Role: </b> </Col>
+                <Col span={3}>
+                    <Select defaultValue="all" onChange={handleChange} style={{ width: '100%' }}>
+                        <Select.Option value="admin">Admin</Select.Option>
+                        <Select.Option value="user">User</Select.Option>
+                        <Select.Option value="all">All</Select.Option>
+                    </Select>
+                </Col>
+
+            </Row>
+
+
             <List
+                className='mt-4'
                 grid={{ gutter: 16 }}
-                dataSource={data}
+                dataSource={dataClone}
                 renderItem={(item) => (
                     <List.Item>
                         <Card
@@ -166,7 +213,7 @@ function User() {
             </List>
             <Modal
                 mask={false}
-                title={disabled ? "User Info": "User Updating"}
+                title={disabled ? "User Info" : "User Updating"}
                 open={showModal}
                 onOk={updateHandle}
                 onCancel={() => setShowModal(false)}
@@ -259,7 +306,7 @@ function User() {
                             listType='picture'
                             beforeUpload={() => false}
                             accept=".png, .jpeg"
-                            multiple="false"
+                            multiple={false}
                             maxCount={1}
                         >
                             <Button icon={<UploadOutlined />}>Upload</Button>
