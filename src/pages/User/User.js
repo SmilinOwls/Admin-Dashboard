@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { List, Card, Avatar, Modal, Button, Popconfirm, Form, Input, InputNumber } from 'antd';
+import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button } from 'antd';
 
 const { Meta } = Card;
 
@@ -15,7 +15,7 @@ function User() {
         email: 'email1@gmail.com',
         password: 'password1',
         phone: '0812431293',
-        img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
 
     },
     {
@@ -24,7 +24,7 @@ function User() {
         email: 'email2@gmail.com',
         password: 'password1',
         phone: '0812431213',
-        img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
     },
     {
         key: 3,
@@ -32,7 +32,7 @@ function User() {
         email: 'email3@gmail.com',
         password: 'password1',
         phone: '0812431213',
-        img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
     },
     {
         key: 4,
@@ -40,7 +40,7 @@ function User() {
         email: 'email4@gmail.com',
         password: 'password1',
         phone: '0812431213',
-        img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
     },
     ]);
 
@@ -49,7 +49,7 @@ function User() {
             xs: {
                 span: 24
             },
-            sm:{
+            sm: {
                 span: 8
             }
         },
@@ -57,10 +57,18 @@ function User() {
             xs: {
                 span: 24
             },
-            sm:{
+            sm: {
                 span: 16
             }
         },
+    };
+
+    const normFile = (e) => {
+        console.log('Upload event:', e);
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e?.fileList;
     };
 
     const updateHandle = () => {
@@ -70,7 +78,22 @@ function User() {
             setConfirmLoading(false);
             // axios handler goes here (PUT)
         }, 2000);
-        
+        const newData = [...data];
+        const index = newData.findIndex((item) => card.key === item.key);
+        console.log(index);
+        if (index > -1) {
+            const item = newData[index];
+            newData.splice(index, 1, {
+                ...item,
+                ...card,
+            });
+            console.log(newData);
+            setData(newData);
+        } else {
+            newData.push(card);
+            setData(newData);
+        }
+        console.log(card);
     };
 
     const deleteHandle = (key) => {
@@ -104,7 +127,7 @@ function User() {
                             ]}
                         >
                             <Meta
-                                avatar={<Avatar src={item.img} />}
+                                avatar={<Avatar src={item.img[0].thumbUrl || URL.createObjectURL(item.img[0].originFileObj)} />}
                                 title={item.username}
                                 description={item.email}
                             />
@@ -125,7 +148,13 @@ function User() {
                     {...formItemLayout}
                     form={form}
                     style={{ width: 430 }}
-                    onValuesChange={(value) => setCard({...card, ...value})}
+                    onValuesChange={(value) => {
+                        if (value.img && value.img.length !== 0) {
+                            setCard({...card, img: [{...value.img[0]}]})
+                        } else {
+                            setCard({ ...card, ...value });
+                        }
+                    }}
                     scrollToFirstError
                 >
                     <Form.Item
@@ -175,6 +204,27 @@ function User() {
                         rules={[{ required: true, message: 'Please input your Phone number!' }]}
                     >
                         <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="img"
+                        label="Image"
+                        valuePropName='fileList'
+                        getValueFromEvent={normFile}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please upload image',
+                            },
+                        ]}>
+                        <Upload
+                            listType='picture'
+                            beforeUpload={() => false}
+                            accept=".png, .jpeg"
+                            multiple="false"
+                            maxCount={1}
+                        >
+                            <Button icon={<UploadOutlined />}>Upload</Button>
+                        </Upload>
                     </Form.Item>
                 </Form>
             </Modal>
