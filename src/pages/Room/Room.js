@@ -201,7 +201,7 @@ function Room() {
         children,
         ...restProps
     }) => {
-        var inputNode = ["cost", "bedroom", "guest"].indexOf(dataIndex) === -1 ? <Input /> : <InputNumber />;
+        var inputNode = ["cost", "bedroom", "guest"].indexOf(dataIndex) === -1 ? <Input /> : <InputNumber min={0}/>;
         switch (dataIndex) {
             case "checkin":
                 inputNode = <DatePicker showTime format={dateFormat} />;

@@ -118,7 +118,7 @@ function User() {
     useEffect(() => {
         if (inputValue) {
             const newData = [...data];
-            var filteredData = newData.filter((item) => item.role.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
+            var filteredData = newData.filter(({username, email, phone, }) => `${username}${email}${phone}`.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
             if(role !== "all"){
                 filteredData = filteredData.filter((item) => item.role === role);
             }

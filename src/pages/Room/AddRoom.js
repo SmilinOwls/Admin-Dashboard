@@ -195,7 +195,7 @@ function AddPlace() {
                                 },
                             ]}
                         >
-                            <InputNumber />
+                            <InputNumber  min={0} />
                         </Form.Item>
                         <Form.Item
                             name="bedroom"
@@ -207,7 +207,7 @@ function AddPlace() {
                                 },
                             ]}
                         >
-                            <InputNumber />
+                            <InputNumber  min={0} />
                         </Form.Item>
                         <Form.Item
                             name="guest"
@@ -219,7 +219,7 @@ function AddPlace() {
                                 },
                             ]}
                         >
-                            <InputNumber />
+                            <InputNumber min={0} />
                         </Form.Item>
                         <Form.Item {...tailFormItemLayout}>
                             <Row gutter={8}>
