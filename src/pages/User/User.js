@@ -116,18 +116,19 @@ function User() {
     };
 
     useEffect(() => {
-        handleChange(role);
-    }, [data]);
-
-    useEffect(() => {
         if (inputValue) {
             const newData = [...data];
-            setData(newData.filter((item) => item.username.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1))
+            var filteredData = newData.filter((item) => item.role.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
+            if(role !== "all"){
+                filteredData = filteredData.filter((item) => item.role === role);
+            }
+            setDataClone(filteredData.length === 0? [] : filteredData);
+        } else{
+            setDataClone(role === "all" ? [...data] : data.filter((item) => item.role === role));
         }
-    }, [inputValue]);
+    }, [data, role, inputValue]);
 
     const onSearch = (e) => {
-        console.log(e.target.value)
         setInputValue(e.target.value);
     };
 
@@ -145,6 +146,7 @@ function User() {
                     <Input
                         placeholder="input search text"
                         onChange={e => onSearch(e)}
+                        allowClear
                         suffix={<SearchOutlined />}
                     />
                 </Col>
