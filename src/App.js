@@ -19,7 +19,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/admin' element={<MainLayout />}>
+        <Route path='/api/admin' element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path='user' element={<User />} />
           <Route path='blog' element={<Blog />} />
