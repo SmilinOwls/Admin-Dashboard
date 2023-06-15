@@ -22,7 +22,7 @@ function Login() {
           <Link className='text-center' to="/forgot-password">Forgot Password?</Link>
         </div>
         <Link
-          to="/admin"
+          to="/api/admin"
           type="submit"
           className="border-0 px-3 py-2 rounded-1 text-white w-100 text-center text-decoration-none fs-5"
           style={{background: '#ffd333'}}
