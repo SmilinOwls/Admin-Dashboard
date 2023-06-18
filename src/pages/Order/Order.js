@@ -1,32 +1,94 @@
 import React, { useEffect, useState } from 'react';
-import {FaReceipt} from 'react-icons/fa';
+import {FaReceipt, FaUser} from 'react-icons/fa';
 import { List, Card, Form, Select, Tag, Row, Col } from 'antd';
 import dayjs from 'dayjs';
+import { connect } from 'react-redux';
+import { deleteOrder } from '../../actions';
 
 const dateFormat = "MM/DD/YYYY HH:mm";
 const dataSource = [{
     key: 1,
     payment: `Name I`,
-    user: 'User I',
-    room: 'Room I',
-    money: '10',
-    date: dayjs('07/12/2023 12:00', dateFormat),
+    user: 'User ID',
+    userInfo: {
+        fullName: "FullName I",
+        phone: "0987773321",
+        IdentifyCard: "1234567890"
+    },
+    cart: [{
+        title: "Title I",
+        image: "",
+        price: 1,
+        numOfDays: 7,
+        maxGuests: 2,
+        qnt: 1,
+        room: "Room ID",
+        key: 1,
+    }],
+    checkIn: dayjs('07/12/2023 12:00', dateFormat),
+    checkOut: dayjs('08/12/2023 12:00', dateFormat),
+    paymentMethod: "Paypal",
+    numOfGuest: 1,
+    orderStatus: "Processing",
+    taxPrice: 0,
+    totalPrice: 10,
+    paidAt: dayjs('06/12/2023 12:00', dateFormat),
 },
 {
     key: 2,
     payment: `Name II`,
-    user: 'User II',
-    room: 'Room II',
-    money: '13',
-    date: dayjs('06/16/2023 12:00', dateFormat),
+    user: 'User ID',
+    userInfo: {
+        fullName: "FullName II",
+        phone: "0987773321",
+        IdentifyCard: "1234567890"
+    },
+    cart: [{
+        title: "Title II",
+        image: "",
+        price: 1,
+        numOfDays: 7,
+        maxGuests: 2,
+        qnt: 1,
+        room: "Room ID",
+        key: 1,
+    }],
+    checkIn: dayjs('07/12/2023 12:00', dateFormat),
+    checkOut: dayjs('08/12/2023 12:00', dateFormat),
+    paymentMethod: "Paypal",
+    numOfGuest: 1,
+    orderStatus: "Processing",
+    taxPrice: 0,
+    totalPrice: 10,
+    paidAt: dayjs('06/12/2023 12:00', dateFormat),
 },
 {
     key: 3,
     payment: `Name III`,
-    user: 'User III',
-    room: 'Room III',
-    money: '12',
-    date: dayjs('06/09/2023 12:00', dateFormat),
+    user: 'User ID',
+    userInfo: {
+        fullName: "FullName III",
+        phone: "0987773321",
+        IdentifyCard: "1234567890"
+    },
+    cart: [{
+        title: "Title III",
+        image: "",
+        price: 1,
+        numOfDays: 7,
+        maxGuests: 2,
+        qnt: 1,
+        room: "Room ID",
+        key: 1,
+    }],
+    checkIn: dayjs('07/12/2023 12:00', dateFormat),
+    checkOut: dayjs('08/12/2023 12:00', dateFormat),
+    paymentMethod: "Paypal",
+    numOfGuest: 1,
+    orderStatus: "Approval",
+    taxPrice: 0,
+    totalPrice: 10,
+    paidAt: dayjs('06/12/2023 12:00', dateFormat),
 },
 ];
 
@@ -37,10 +99,9 @@ function Order() {
     const [dataClone, setDataClone] = useState(dataSource);
     
     const handleChange = (value) => {
-        setRole(value);
+        setStatus(value);
         setDataClone(value === "all" ? [...data] : data.filter((item) => item.role === value));
     };
-
 
     return (
         <div className='mt-3'>
@@ -49,7 +110,9 @@ function Order() {
                 <Col span={2} className="ms-3"><b>Status: </b> </Col>
                 <Col span={3}>
                     <Select defaultValue="all" onChange={handleChange} style={{ width: '100%' }}>
-
+                        <Select.Option value="processing">Processing</Select.Option>
+                        <Select.Option value="approval">Approval</Select.Option>
+                        <Select.Option value="all">All</Select.Option>
                     </Select>
                 </Col>
 
@@ -67,8 +130,8 @@ function Order() {
                         <Card
                             style={{ width: 270 }}
                             hoverable
-                            extra={item.date.toDate().toLocaleString()}
-                            title={<div>Status</div>}
+                            extra={item.paidAt.toDate().toLocaleString()}
+                            title={item.orderStatus}
                             onClick={() => setCard(item)}
                         >
                             <Form
@@ -88,9 +151,15 @@ function Order() {
                                 >
                                     <span>{item.key}</span>
                                 </Form.Item>
+                                <Form.Item
+                                    name="key"
+                                    label={<span><FaUser className='me-2'/><b>User</b></span>}
+                                >
+                                    <span>{item.user}</span>
+                                </Form.Item>
                             </Form>
                             <div className='d-flex flex-column footer'>
-                                <div className='btn align-self-end'>{item.money}</div>
+                                <div className='btn align-self-end'>{item.totalPrice}</div>
                             </div>
                         </Card>
                     </List.Item>
@@ -102,4 +171,21 @@ function Order() {
     )
 }
 
-export default Order
+const mapStateToProps = state => {
+    return {
+      orders: state.orders
+    };
+  };
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+      onDelete: id => {
+        dispatch(deleteOrder(id));
+      }
+    };
+  };
+  
+  export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Order);
