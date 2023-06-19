@@ -1,8 +1,8 @@
 // index.js
 
 import { combineReducers } from 'redux';
-import orderReducer from './orderReducer';
+import OrderReducer from './OrderReducer';
 
 export default combineReducers({
-    orders: orderReducer
+    orders: OrderReducer
 });

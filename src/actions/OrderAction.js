@@ -10,9 +10,7 @@ export const updateOrder = (order) => ({
   order: order
 });
 
-export const deleteOrder = key => ({
+export const deleteOrder = id => ({
   type: DELETE_ORDER,
-  orderID: {
-    key
-  }
+  id
 });

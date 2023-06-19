@@ -1,107 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {FaReceipt, FaUser} from 'react-icons/fa';
-import { List, Card, Form, Select, Tag, Row, Col } from 'antd';
-import dayjs from 'dayjs';
+import {RiMoneyDollarCircleFill} from 'react-icons/ri';
+import { List, Card, Form, Select, Row, Col } from 'antd';
 import { connect } from 'react-redux';
-import { deleteOrder } from '../../actions';
+import {bindActionCreators} from 'redux';
+import * as OrderAction from '../../actions/OrderAction.js';
 
-const dateFormat = "MM/DD/YYYY HH:mm";
-const dataSource = [{
-    key: 1,
-    payment: `Name I`,
-    user: 'User ID',
-    userInfo: {
-        fullName: "FullName I",
-        phone: "0987773321",
-        IdentifyCard: "1234567890"
-    },
-    cart: [{
-        title: "Title I",
-        image: "",
-        price: 1,
-        numOfDays: 7,
-        maxGuests: 2,
-        qnt: 1,
-        room: "Room ID",
-        key: 1,
-    }],
-    checkIn: dayjs('07/12/2023 12:00', dateFormat),
-    checkOut: dayjs('08/12/2023 12:00', dateFormat),
-    paymentMethod: "Paypal",
-    numOfGuest: 1,
-    orderStatus: "Processing",
-    taxPrice: 0,
-    totalPrice: 10,
-    paidAt: dayjs('06/12/2023 12:00', dateFormat),
-},
-{
-    key: 2,
-    payment: `Name II`,
-    user: 'User ID',
-    userInfo: {
-        fullName: "FullName II",
-        phone: "0987773321",
-        IdentifyCard: "1234567890"
-    },
-    cart: [{
-        title: "Title II",
-        image: "",
-        price: 1,
-        numOfDays: 7,
-        maxGuests: 2,
-        qnt: 1,
-        room: "Room ID",
-        key: 1,
-    }],
-    checkIn: dayjs('07/12/2023 12:00', dateFormat),
-    checkOut: dayjs('08/12/2023 12:00', dateFormat),
-    paymentMethod: "Paypal",
-    numOfGuest: 1,
-    orderStatus: "Processing",
-    taxPrice: 0,
-    totalPrice: 10,
-    paidAt: dayjs('06/12/2023 12:00', dateFormat),
-},
-{
-    key: 3,
-    payment: `Name III`,
-    user: 'User ID',
-    userInfo: {
-        fullName: "FullName III",
-        phone: "0987773321",
-        IdentifyCard: "1234567890"
-    },
-    cart: [{
-        title: "Title III",
-        image: "",
-        price: 1,
-        numOfDays: 7,
-        maxGuests: 2,
-        qnt: 1,
-        room: "Room ID",
-        key: 1,
-    }],
-    checkIn: dayjs('07/12/2023 12:00', dateFormat),
-    checkOut: dayjs('08/12/2023 12:00', dateFormat),
-    paymentMethod: "Paypal",
-    numOfGuest: 1,
-    orderStatus: "Approval",
-    taxPrice: 0,
-    totalPrice: 10,
-    paidAt: dayjs('06/12/2023 12:00', dateFormat),
-},
-];
-
-function Order() {
-    const [card, setCard] = useState({});
-    const [status, setStatus] = useState('all');
-    const [data, setData] = useState(dataSource);
-    const [dataClone, setDataClone] = useState(dataSource);
+function Order({orders, actions}) {
+    const [data, setData] = useState(orders);
+    const [status, setStatus] = useState('All');
     
-    const handleChange = (value) => {
-        setStatus(value);
-        setDataClone(value === "all" ? [...data] : data.filter((item) => item.role === value));
-    };
+    useEffect(() => {
+        // actions.getOrder();
+    }, []);
+
+    useEffect(() => {
+        setData(status === "All" ? [...orders] : orders.filter((item) => item.orderStatus === status));
+    }, [status, orders]);
 
     return (
         <div className='mt-3'>
@@ -109,10 +24,10 @@ function Order() {
             <Row style={{ width: '100%' }} className="mt-3 align-items-center">
                 <Col span={2} className="ms-3"><b>Status: </b> </Col>
                 <Col span={3}>
-                    <Select defaultValue="all" onChange={handleChange} style={{ width: '100%' }}>
-                        <Select.Option value="processing">Processing</Select.Option>
-                        <Select.Option value="approval">Approval</Select.Option>
-                        <Select.Option value="all">All</Select.Option>
+                    <Select defaultValue="All" onChange={(value) => setStatus(value)} style={{ width: '100%' }}>
+                        <Select.Option value="Processing">Processing</Select.Option>
+                        <Select.Option value="Approval">Approval</Select.Option>
+                        <Select.Option value="All">All</Select.Option>
                     </Select>
                 </Col>
 
@@ -121,18 +36,22 @@ function Order() {
             <List
                 className='mt-4'
                 grid={{ gutter: 16 }}
-                dataSource={dataClone}
+                dataSource={data}
                 pagination={{
                     pageSize: 10,
                   }}
                 renderItem={(item) => (
                     <List.Item>
                         <Card
-                            style={{ width: 270 }}
+                            style={{ width: 300, backgroundColor: "#87CEFA" }}
                             hoverable
-                            extra={item.paidAt.toDate().toLocaleString()}
-                            title={item.orderStatus}
-                            onClick={() => setCard(item)}
+                            extra={
+                            <div className='d-flex flex-column align-items-end'>
+                                <div>{item.paidAt.format('MM/DD/YYYY')}</div>
+                                <div>{item.paidAt.format('HH:mm')}</div>
+                            </div>}
+                            title={<div className='border-dark border-opacity-25 bg-body w-50'>{item.orderStatus}</div>}
+                            onClick={() => actions.deleteOrder(item.key)}
                         >
                             <Form
                                 labelCol={{
@@ -143,23 +62,27 @@ function Order() {
                                 }}
                                 style={{
                                     maxWidth: 300,
+                                    border: "1px solid #DCDCDC",
+                                    borderRadius: "3%",
+                                    marginBottom: "15px",
                                 }}
+                                className="bg-body"
                             >
                                 <Form.Item
                                     name="key"
-                                    label={<span><FaReceipt className='me-2'/><b>ID</b></span>}
+                                    label={<span><FaReceipt className='me-2 mb-1'/><b>ID</b></span>}
                                 >
                                     <span>{item.key}</span>
                                 </Form.Item>
                                 <Form.Item
                                     name="key"
-                                    label={<span><FaUser className='me-2'/><b>User</b></span>}
+                                    label={<span><FaUser className='me-2 mb-1'/><b>User</b></span>}
                                 >
                                     <span>{item.user}</span>
                                 </Form.Item>
                             </Form>
                             <div className='d-flex flex-column footer'>
-                                <div className='btn align-self-end'>{item.totalPrice}</div>
+                                <div className='btn align-self-end border-dark border-opacity-25 fw-bold bg-body'>{item.totalPrice}<RiMoneyDollarCircleFill className='mx-2 mb-1 fs-5' color='#87d068'/></div>
                             </div>
                         </Card>
                     </List.Item>
@@ -179,9 +102,7 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
     return {
-      onDelete: id => {
-        dispatch(deleteOrder(id));
-      }
+      actions: bindActionCreators(OrderAction, dispatch)
     };
   };
   
