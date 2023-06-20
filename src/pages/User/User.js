@@ -116,7 +116,7 @@ function User() {
     };
 
     useEffect(() => {
-        if (inputValue) {
+        if (inputValue.trim()) {
             const newData = [...data];
             var filteredData = newData.filter(({username, email, phone, }) => `${username}${email}${phone}`.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
             if(role !== "all"){
@@ -153,9 +153,9 @@ function User() {
                 <Col span={2} className="ms-3"><b>Role: </b> </Col>
                 <Col span={3}>
                     <Select defaultValue="all" onChange={handleChange} style={{ width: '100%' }}>
+                        <Select.Option value="all">All</Select.Option>
                         <Select.Option value="admin">Admin</Select.Option>
                         <Select.Option value="user">User</Select.Option>
-                        <Select.Option value="all">All</Select.Option>
                     </Select>
                 </Col>
 

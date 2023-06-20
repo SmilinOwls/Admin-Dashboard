@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { AiOutlineDashboard } from 'react-icons/ai';
 import { FaBloggerB, FaHotel } from 'react-icons/fa';
-import { MdBedroomParent, MdPlace } from 'react-icons/md';
+import { MdBedroomParent } from 'react-icons/md';
 import { LuClipboardList } from 'react-icons/lu';
 import { BiCategory } from 'react-icons/bi';
 import { IoIosNotifications } from 'react-icons/io';
@@ -123,7 +123,7 @@ function MainLayout() {
                     <Link
                       className="dropdown-item py-1 mb-1 z-2"
                       style={{ height: "auto", lineHeight: "20px" }}
-                      to="/admin"
+                      to="/api/admin"
                     >
                       View Profile
                     </Link>

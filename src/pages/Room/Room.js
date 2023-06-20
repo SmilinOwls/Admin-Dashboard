@@ -5,9 +5,9 @@ import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Spac
 import Highlighter from 'react-highlight-words';
 import dayjs from 'dayjs';
 import AddRoom from './AddRoom';
+import {dateFormat} from '../../utils/config';
 
 function Room() {
-    const dateFormat = "MM/DD/YYYY HH:mm";
     // Search 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
