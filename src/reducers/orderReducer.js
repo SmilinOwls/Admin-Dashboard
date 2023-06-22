@@ -10,14 +10,13 @@ export default function postReducer(state = [], action) {
         const data = [...state];
         const idx = data.findIndex(order => order.key === action.order.key);
         if(idx > -1){
-            const item = state[idx];
             data.splice(idx, 1, {
                 ...action.order,
-                ...item
             });
         } else{
             data.push(action.order);
         }
+        console.log("Data",data);
         
       return data;
     case DELETE_ORDER:
