@@ -7,9 +7,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import * as OrderAction from '../../actions/OrderAction.js';
-import { Link, useNavigate } from "react-router-dom";
-
-
+import { useNavigate } from "react-router-dom";
+import dayjs from 'dayjs';
 
 function Order({ orders, actions }) {
     const navigate = useNavigate();
@@ -57,8 +56,8 @@ function Order({ orders, actions }) {
                             hoverable
                             extra={
                                 <div className='d-flex flex-column align-items-end fst-italic'>
-                                    <div>{item.paidAt.format('MM/DD/YYYY')}</div>
-                                    <div>{item.paidAt.format('HH:mm')}</div>
+                                    <div>{dayjs(item.paidAt).format('MM/DD/YYYY')}</div>
+                                    <div>{dayjs(item.paidAt).format('HH:mm')}</div>
                                 </div>}
                             title={
                                 <div className='border-dark border-opacity-25 bg-body w-75 rounded-3 px-2'>
@@ -77,27 +76,27 @@ function Order({ orders, actions }) {
                         >
                             <Form
                                 labelCol={{
-                                    span: 8,
+                                    span: 10,
                                 }}
                                 wrapperCol={{
-                                    span: 16,
+                                    span: 14,
                                 }}
                                 style={{
-                                    maxWidth: 300,
+                                    maxWidth: 270,
                                     border: "1px solid #DCDCDC",
                                     marginBottom: "15px",
                                 }}
-                                className="bg-body rounded-3"
+                                className="bg-body rounded-3 p-2"
                             >
                                 <Form.Item
                                     name="key"
-                                    label={<span><FaReceipt {...style} /><b>ID</b></span>}
+                                    label={<span><FaReceipt {...style} /><b>Order ID</b></span>}
                                 >
                                     <span>{item.key}</span>
                                 </Form.Item>
                                 <Form.Item
                                     name="key"
-                                    label={<span><FaUser {...style} /><b>User</b></span>}
+                                    label={<span><FaUser {...style} /><b>User ID</b></span>}
                                 >
                                     <span>{item.user}</span>
                                 </Form.Item>

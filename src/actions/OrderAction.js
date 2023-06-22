@@ -1,10 +1,9 @@
 import { GET_ORDER, UPDATE_ORDER, DELETE_ORDER } from './types';
-import dayjs from 'dayjs';
-import {dateFormat} from '../utils/config';
+
 
 const dataSource = [{
   key: 1,
-  place: `Place I`,
+  place: `Place ID`,
   user: 'User ID',
   userInfo: {
       fullName: "FullName I",
@@ -21,18 +20,18 @@ const dataSource = [{
       room: "Room ID",
       key: 1,
   }],
-  checkIn: dayjs('07/12/2023 12:00', dateFormat),
-  checkOut: dayjs('08/12/2023 12:00', dateFormat),
+  checkIn: '07/12/2023 12:00',
+  checkOut: '08/12/2023 12:00',
   paymentMethod: "Paypal",
   numOfGuest: 1,
   orderStatus: "Processing",
   taxPrice: 0,
   totalPrice: 10,
-  paidAt: dayjs('06/12/2023 12:00', dateFormat),
+  paidAt: '06/12/2023 12:00',
 },
 {
   key: 2,
-  place: `Place II`,
+  place: `Place ID`,
   user: 'User ID',
   userInfo: {
       fullName: "FullName II",
@@ -49,18 +48,18 @@ const dataSource = [{
       room: "Room ID",
       key: 1,
   }],
-  checkIn: dayjs('07/12/2023 12:00', dateFormat),
-  checkOut: dayjs('08/12/2023 12:00', dateFormat),
+  checkIn: '07/12/2023 12:00',
+  checkOut: '08/12/2023 12:00',
   paymentMethod: "Paypal",
   numOfGuest: 1,
   orderStatus: "Processing",
   taxPrice: 0,
   totalPrice: 10,
-  paidAt: dayjs('06/12/2023 12:00', dateFormat),
+  paidAt: '06/12/2023 12:00',
 },
 {
   key: 3,
-  place: `Place III`,
+  place: `Place ID`,
   user: 'User ID',
   userInfo: {
       fullName: "FullName III",
@@ -76,15 +75,16 @@ const dataSource = [{
       qnt: 1,
       room: "Room ID",
       key: 1,
-  }],
-  checkIn: dayjs('07/12/2023 12:00', dateFormat),
-  checkOut: dayjs('08/12/2023 12:00', dateFormat),
+  },
+],
+  checkIn: '07/12/2023 12:00',
+  checkOut: '08/12/2023 12:00',
   paymentMethod: "Paypal",
   numOfGuest: 1,
   orderStatus: "Approval",
   taxPrice: 0,
   totalPrice: 10,
-  paidAt: dayjs('06/12/2023 12:00', dateFormat),
+  paidAt: '6/12/2023 12:00'
 },
 ];
 

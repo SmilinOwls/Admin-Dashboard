@@ -179,7 +179,7 @@ function User() {
                                         ...item,
                                     });
                                 } catch (error) {
-
+                                    throw error;
                                 }
                                 setShowModal(true);
                             }}
