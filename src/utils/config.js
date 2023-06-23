@@ -38,3 +38,4 @@ export const normFile = (e) => {
     }
     return e?.fileList;
 };
+

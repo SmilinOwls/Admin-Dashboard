@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { base_url } from './baseUrl';
 
-class dataAPI {
-
+class DataAPI {
     // Place
     static async getAllPlaces() {
         try {
@@ -144,4 +142,4 @@ class dataAPI {
     }
 }
 
-export default dataAPI;
+export default DataAPI;

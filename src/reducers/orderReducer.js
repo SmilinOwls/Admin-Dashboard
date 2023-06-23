@@ -2,7 +2,7 @@
 
 import { GET_ORDER, UPDATE_ORDER, DELETE_ORDER } from '../actions/types';
 
-export default function postReducer(state = [], action) {
+export default function OrderReducer(state = [], action) {
   switch (action.type) {
     case GET_ORDER:
       return state.length !== 0 ?  state : action.orders;
@@ -16,7 +16,6 @@ export default function postReducer(state = [], action) {
         } else{
             data.push(action.order);
         }
-        console.log("Data",data);
         
       return data;
     case DELETE_ORDER:

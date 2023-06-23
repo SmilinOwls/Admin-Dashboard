@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as BlogAction from '../../actions/BlogAction.js';
 import { UploadOutlined, SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import AddBlog from './AddBlog';
 
-function Blog() {
+function Blog({blogs, actions}) {
     // Search 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -105,40 +108,17 @@ function Blog() {
 
     const [form] = Form.useForm();
     const [isAdd, setIsAdd] = useState(false);
-    const [data, setData] = useState([{
-        key: 1,
-        title: `A`,
-        content: '<b>Hotel Blog</b>',
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-    },
-    {
-        key: 2,
-        title: `B`,
-        content: '<b>Hotel Blog</b>',
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-    },
-    {
-        key: 3,
-        title: `C`,
-        content: '<b>Hotel Blog</b>',
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-    }]);
+    const [data, setData] = useState(blogs);
     const [editingKey, setEditingKey] = useState('');
+
+    useEffect(() => {
+        actions.getBlog();
+    }, []);
+
+    useEffect(() => {
+        setData(blogs);
+    }, [blogs]);
+
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
@@ -152,35 +132,21 @@ function Blog() {
         setEditingKey('');
     };
     const save = async (key) => {
+        // axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
+            actions.updateBlog({...row, key: key});
+            setEditingKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
 
-        // axios handler goes here (PUT)
-
+        
     };
     const handleDelete = (key) => {
-        const newData = data.filter((item) => item.key !== key);
-        setData(newData);
-
         // axios handler goes here (DELETE)
+        actions.deleteBlog(key);
+        setData(blogs);
     };
     const normfile = (e) => {
         if (Array.isArray(e)) {
@@ -195,6 +161,7 @@ function Blog() {
         record,
         index,
         children,
+        key,
         ...restProps
     }) => {
         var inputNode = <Input />;
@@ -216,7 +183,7 @@ function Blog() {
         }
 
         return (
-            <td {...restProps}>
+            <td key={key} {...restProps}>
                 {editing ? (
                     <Form.Item
                         name={dataIndex}
@@ -345,8 +312,6 @@ function Blog() {
         };
     });
 
-
-
     return (
         <div className='mt-3'>
             {!isAdd ? (
@@ -365,6 +330,7 @@ function Blog() {
                             bordered
                             dataSource={data}
                             columns={mergedColumns}
+                            rowKey={( record ) => record.key}
                             rowClassName="editable-row"
                             pagination={{
                                 onChange: cancel,
@@ -391,4 +357,19 @@ function Blog() {
     )
 }
 
-export default Blog
+const mapStateToProps = state => {
+    return {
+        blogs: state.blogs
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators(BlogAction, dispatch)
+    };
+};
+
+export default  connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Blog);
