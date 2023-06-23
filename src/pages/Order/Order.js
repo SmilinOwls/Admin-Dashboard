@@ -29,7 +29,7 @@ function Order({ orders, actions }) {
 
     return (
         <div className='mt-3'>
-            <h3 className='my-2'>User List</h3>
+            <h3 className='my-2'>Order List</h3>
             <Row style={{ width: '100%' }} className="mt-3 align-items-center">
                 <Col span={2} className="ms-3"><b>Status: </b> </Col>
                 <Col span={3}>
@@ -66,10 +66,10 @@ function Order({ orders, actions }) {
                                 </div>}
                             actions={[
                                 <EditOutlined onClick={() => {
-                                    navigate(`/api/admin/book/${item.key}`, { state: { order: item } });
+                                    navigate(`/api/admin/book/${item._id}`, { state: { order: item } });
                                 }}></EditOutlined>
                                 ,
-                                <Popconfirm title="Sure to delete?" onConfirm={() => actions.deleteOrder(item.key)}>
+                                <Popconfirm title="Sure to delete?" onConfirm={() => actions.deleteOrder(item._id)}>
                                     <span style={{ cursor: "pointer" }}><DeleteOutlined /></span>
                                 </Popconfirm>
                             ]}
@@ -89,13 +89,13 @@ function Order({ orders, actions }) {
                                 className="bg-body rounded-3 p-2"
                             >
                                 <Form.Item
-                                    name="key"
+                                    name="_id"
                                     label={<span><FaReceipt {...style} /><b>Order ID</b></span>}
                                 >
-                                    <span>{item.key}</span>
+                                    <span>{item._id}</span>
                                 </Form.Item>
                                 <Form.Item
-                                    name="key"
+                                    name="user"
                                     label={<span><FaUser {...style} /><b>User ID</b></span>}
                                 >
                                     <span>{item.user}</span>

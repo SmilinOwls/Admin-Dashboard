@@ -119,23 +119,23 @@ function Blog({blogs, actions}) {
         setData(blogs);
     }, [blogs]);
 
-    const isEditing = (record) => record.key === editingKey;
+    const isEditing = (record) => record._id === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
             title: '',
-            content: '',
+            fullText: '',
             ...record,
         });
-        setEditingKey(record.key);
+        setEditingKey(record._id);
     };
     const cancel = () => {
         setEditingKey('');
     };
-    const save = async (key) => {
+    const save = async (_id) => {
         // axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            actions.updateBlog({...row, key: key});
+            actions.updateBlog({...row, _id: _id});
             setEditingKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -143,9 +143,9 @@ function Blog({blogs, actions}) {
 
         
     };
-    const handleDelete = (key) => {
+    const handleDelete = (_id) => {
         // axios handler goes here (DELETE)
-        actions.deleteBlog(key);
+        actions.deleteBlog(_id);
         setData(blogs);
     };
     const normfile = (e) => {
@@ -166,10 +166,10 @@ function Blog({blogs, actions}) {
     }) => {
         var inputNode = <Input />;
         switch (dataIndex) {
-            case "content":
+            case "fullText":
                 inputNode = <ReactQuill />;
                 break;
-            case "img":
+            case "image":
                 inputNode =
                     <Upload
                         listType="picture-card"
@@ -183,15 +183,15 @@ function Blog({blogs, actions}) {
         }
 
         return (
-            <td key={key} {...restProps}>
+            <td {...restProps}>
                 {editing ? (
                     <Form.Item
                         name={dataIndex}
                         style={{
                             margin: 0,
                         }}
-                        getValueFromEvent={dataIndex === "img" ? normfile : null}
-                        valuePropName={dataIndex === "img" ? "fileList" : "value"}
+                        getValueFromEvent={dataIndex === "image" ? normfile : null}
+                        valuePropName={dataIndex === "image" ? "fileList" : "value"}
                         rules={[
                             {
                                 required: true,
@@ -210,7 +210,7 @@ function Blog({blogs, actions}) {
     const columns = [
         {
             title: "SNo",
-            dataIndex: "key",
+            dataIndex: "_id",
             width: "10%"
         },
         {
@@ -223,23 +223,23 @@ function Blog({blogs, actions}) {
             ...getColumnSearchProps('title')
         },
         {
-            title: "Content",
-            dataIndex: "content",
+            title: "Full Text",
+            dataIndex: "fullText",
             editable: true,
             width: "30%",
-            ...getColumnSearchProps('content')
+            ...getColumnSearchProps('fullText')
         },
         {
             title: "Image",
-            dataIndex: "img",
+            dataIndex: "image",
             editable: true,
             width: "35%",
             render: (imgs, _) => {
                 return (
                     <div className='row'>
                         {imgs.map((img, idx) =>
-                            <div className='col-3 me-2'>
-                                <Image className='me-2' key={idx} width={50} height={50} src={img.thumbUrl} />
+                            <div className='col-3 me-2' key={idx}>
+                                <Image className='me-2' width={50} height={50} src={img.thumbUrl} />
                             </div>)}
                     </div>
                 )
@@ -256,7 +256,7 @@ function Blog({blogs, actions}) {
                 return editable ? (
                     <span className='row'>
                         <Typography.Link
-                            onClick={() => save(record.key)}
+                            onClick={() => save(record._id)}
                             style={{
                                 marginRight: 8,
                                 textAlign: "center"
@@ -290,7 +290,7 @@ function Blog({blogs, actions}) {
             colSpan: 0,
             render: (_, record) => {
                 return (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
                         <span className='text-primary' style={{cursor: "pointer"}}>Delete</span>
                     </Popconfirm>
                 )
@@ -330,7 +330,7 @@ function Blog({blogs, actions}) {
                             bordered
                             dataSource={data}
                             columns={mergedColumns}
-                            rowKey={( record ) => record.key}
+                            rowKey={( record ) => record._id}
                             rowClassName="editable-row"
                             pagination={{
                                 onChange: cancel,

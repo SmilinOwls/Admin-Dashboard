@@ -8,7 +8,7 @@ import CustomStepper from "../../components/CustomStepper";
 function AddBlog() {
   const [formData, setFormData] = useState({
     title: '',
-    content: '',
+    fullText: '',
     image: []
   });
 
@@ -16,7 +16,7 @@ function AddBlog() {
     if (typeof e !== 'object'){
       setFormData({
         ...formData,
-        content: e
+        fullText: e
       });
     } else{
       const {name, value} = e.target;

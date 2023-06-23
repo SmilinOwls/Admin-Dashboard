@@ -8,7 +8,7 @@ export default function OrderReducer(state = [], action) {
       return state.length !== 0 ?  state : action.orders;
     case UPDATE_ORDER:
         const data = [...state];
-        const idx = data.findIndex(order => order.key === action.order.key);
+        const idx = data.findIndex(order => order._id === action.order._id);
         if(idx > -1){
             data.splice(idx, 1, {
                 ...action.order,
@@ -19,7 +19,7 @@ export default function OrderReducer(state = [], action) {
         
       return data;
     case DELETE_ORDER:
-      return state.filter(order => order.key !== action.id);
+      return state.filter(order => order._id !== action._id);
     default:
       return state;
   }

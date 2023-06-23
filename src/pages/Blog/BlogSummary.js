@@ -1,9 +1,13 @@
 import React from 'react'
-import { Button, Form, Input, Image } from 'antd';
+import { Button, Form, Input, Image, notification } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import { useDispatch } from 'react-redux';
+import { addBlog } from '../../actions/BlogAction';
 
-function BlogSummary({ formData, handleChange }) {
-    const { title, content, image } = formData;
+function BlogSummary({ formData }) {
+    const dispatch = useDispatch();
+    const [api, contextHolder] = notification.useNotification();
+    const { title, fullText, image } = formData;
     const formItemLayout = {
         labelCol: { span: 5 },
         wrapperCol: { span: 14 },
@@ -11,6 +15,12 @@ function BlogSummary({ formData, handleChange }) {
     const onFinish = (values) => {
         // axios handler goes here (POST)
         console.log('Success:', values);
+        dispatch(addBlog(values));
+        api["success"]({
+            message: 'Add Blog Successfully!',
+            description:
+                'Return to the blog list to see any reflecting changes',
+        });
     };
     return (
         <div className='row'>
@@ -22,7 +32,7 @@ function BlogSummary({ formData, handleChange }) {
                     }}
                     initialValues={{
                         title: title,
-                        content: content,
+                        fullText: fullText,
                         image: image
                     }}
                     onFinish={onFinish}
@@ -36,13 +46,12 @@ function BlogSummary({ formData, handleChange }) {
                     </Form.Item>
                     <Form.Item
                         {...formItemLayout}
-                        name="content"
-                        label="Blog Content"
-                        valuePropName={content}
+                        name="fullText"
+                        label="Full Text"
                     >
                         <div className="ms-2">
-                            <TextArea value={content} placeholder={content} rows={8} readOnly={true} disabled={true} />
-                            <div dangerouslySetInnerHTML={{ __html: content }} className="my-3"></div>
+                            <TextArea value={fullText} placeholder={fullText} rows={8} readOnly={true} disabled={true} />
+                            <div dangerouslySetInnerHTML={{ __html: fullText }} className="my-3"></div>
                         </div>
                     </Form.Item>
                     <Form.Item
@@ -53,7 +62,7 @@ function BlogSummary({ formData, handleChange }) {
                         <div className='container'>
                             <div className='row'>
                                 {image.map((img, idx) => (
-                                    <div className='col-3 mb-2'>
+                                    <div className='col-3 mb-2' key={idx}>
                                         <Image src={img.thumbUrl} width={80} height={80} key={idx} />
                                     </div>
                                 )
@@ -62,6 +71,7 @@ function BlogSummary({ formData, handleChange }) {
                         </div>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 5, span: 16 }}>
+                        {contextHolder}
                         <Button type="primary" htmlType="submit" className='ms-2'>
                             Submit
                         </Button>

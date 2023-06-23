@@ -1,10 +1,10 @@
-import { GET_BLOG, UPDATE_BLOG, DELETE_BLOG } from './types';
+import { GET_BLOG, ADD_BLOG, UPDATE_BLOG, DELETE_BLOG } from './types';
 
 const dataSource = [{
-    key: 1,
+    _id: '1',
     title: `A`,
-    content: '<b>Hotel Blog</b>',
-    img: [{
+    fullText: '<b>Hotel Blog</b>',
+    image: [{
         uid: '-1',
         name: 'image.png',
         status: 'done',
@@ -12,10 +12,10 @@ const dataSource = [{
     }],
 },
 {
-    key: 2,
+    _id: '2',
     title: `B`,
-    content: '<b>Hotel Blog</b>',
-    img: [{
+    fullText: '<b>Hotel Blog</b>',
+    image: [{
         uid: '-1',
         name: 'image.png',
         status: 'done',
@@ -23,10 +23,10 @@ const dataSource = [{
     }],
 },
 {
-    key: 3,
+    _id: '3',
     title: `C`,
-    content: '<b>Hotel Blog</b>',
-    img: [{
+    fullText: '<b>Hotel Blog</b>',
+    image: [{
         uid: '-1',
         name: 'image.png',
         status: 'done',
@@ -42,6 +42,14 @@ export const getBlog = () => {
     });
 };
 
+export const addBlog = (blog) => {
+
+    return ({
+        type: ADD_BLOG,
+        blog: blog
+    });
+};
+
 export const updateBlog = (blog) => {
 
     return ({
@@ -50,10 +58,10 @@ export const updateBlog = (blog) => {
     });
 };
 
-export const deleteBlog = id => {
+export const deleteBlog = _id => {
 
     return ({
         type: DELETE_BLOG,
-        id
+        _id
     });
 };

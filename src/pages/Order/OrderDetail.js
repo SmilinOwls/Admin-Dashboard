@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as OrderAction from '../../actions/OrderAction.js';
 import { bindActionCreators } from 'redux';
 import { dateFormat, formItemLayout, tailFormItemLayout } from '../../utils/config';
-import { Form, Input, Select, Space, DatePicker, Button, Modal, Row, Col, Image, InputNumber, Divider } from 'antd';
+import { Form, Input, Select, Space, DatePicker, Button, Modal, Row, Col, Image, InputNumber, Divider, message } from 'antd';
 import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
@@ -19,6 +19,7 @@ function OrderDetail({ actions }) {
   const [book, setBook] = useState({ ...order })
   const [cart, setCart] = useState(order.cart);
   const backUpCart = order.cart.slice(0);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const styleConfig = {
     className: 'rounded-2 p-3 bg-opacity-75 bg-white',
@@ -38,17 +39,37 @@ function OrderDetail({ actions }) {
   }, []);
 
   useEffect(() => {
-    form.setFieldValue("cart", [ ...cart ]);
+    form.setFieldValue("cart", [...cart]);
   }, [cart]);
 
   const deleteCartItem = (cartItemID) => {
-    book.cart = [...order.cart].filter((item) => item.key !== cartItemID);
+    book.cart = [...order.cart].filter((item) => item._id !== cartItemID);
     setCart(book.cart);
   };
 
   const restoreCartItem = () => {
     book.cart = [...backUpCart];
     setCart(backUpCart);
+  };
+
+  const deleteOrder = () => {
+
+    messageApi.open({
+      key: 'updated',
+      type: 'loading',
+      content: 'Action in Progress...',
+    });
+
+    actions.deleteOrder(book._id);
+
+    setTimeout(() => {
+      messageApi.open({
+        key: 'updated',
+        type: 'success',
+        content: 'Delete order successfully!',
+        duration: 2,
+      }).then(() => navigate('/api/admin/book'));
+    }, 1000);
   };
 
   const onFinish = (values) => {
@@ -138,10 +159,10 @@ function OrderDetail({ actions }) {
             <div {...styleConfig}>
               <h4 className='mb-3'>Order Info</h4>
               <Form.Item
-                name="key"
+                name="_id"
                 label="Order ID"
               >
-                <span>{book.key}</span>
+                <span>{book._id}</span>
               </Form.Item>
               <Form.Item
                 name="place"
@@ -340,7 +361,7 @@ function OrderDetail({ actions }) {
                             <InputNumber placeholder="Max Guests" />
                           </Form.Item>
                           <Form.Item wrapperCol={{ offset: 6, span: 5 }}>
-                            <Button icon={<DeleteOutlined />} onClick={() => deleteCartItem(order.cart[key].key)} />
+                            <Button icon={<DeleteOutlined />} onClick={() => deleteCartItem(order.cart[key]._id)} />
                           </Form.Item>
                         </Col>
                         <Divider />
@@ -361,7 +382,8 @@ function OrderDetail({ actions }) {
                   </Button>
                 </Col>
                 <Col span={6}>
-                  <Button onClick={() => actions.deleteOrder(book.key)}>
+                  {contextHolder}
+                  <Button onClick={deleteOrder}>
                     Delete
                   </Button>
                 </Col>

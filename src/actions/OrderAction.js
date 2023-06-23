@@ -2,23 +2,23 @@ import { GET_ORDER, UPDATE_ORDER, DELETE_ORDER } from './types';
 
 
 const dataSource = [{
-  key: 1,
+  _id: '1',
   place: `Place ID`,
   user: 'User ID',
   userInfo: {
-      fullName: "FullName I",
-      phone: "0987773321",
-      IdentifyCard: "1234567890"
+    fullName: "FullName I",
+    phone: "0987773321",
+    IdentifyCard: "1234567890"
   },
   cart: [{
-      title: "Title I",
-      image: "",
-      price: 1,
-      numOfDays: 7,
-      maxGuests: 2,
-      qnt: 1,
-      room: "Room ID",
-      key: 1,
+    title: "Title I",
+    image: "",
+    price: 1,
+    numOfDays: 7,
+    maxGuests: 2,
+    qnt: 1,
+    room: "Room ID",
+    _id: '1',
   }],
   checkIn: '07/12/2023 12:00',
   checkOut: '08/12/2023 12:00',
@@ -30,23 +30,23 @@ const dataSource = [{
   paidAt: '06/12/2023 12:00',
 },
 {
-  key: 2,
+  _id: '2',
   place: `Place ID`,
   user: 'User ID',
   userInfo: {
-      fullName: "FullName II",
-      phone: "0987773321",
-      IdentifyCard: "1234567890"
+    fullName: "FullName II",
+    phone: "0987773321",
+    IdentifyCard: "1234567890"
   },
   cart: [{
-      title: "Title II",
-      image: "",
-      price: 1,
-      numOfDays: 7,
-      maxGuests: 2,
-      qnt: 1,
-      room: "Room ID",
-      key: 1,
+    title: "Title II",
+    image: "",
+    price: 1,
+    numOfDays: 7,
+    maxGuests: 2,
+    qnt: 1,
+    room: "Room ID",
+    _id: '1',
   }],
   checkIn: '07/12/2023 12:00',
   checkOut: '08/12/2023 12:00',
@@ -58,25 +58,25 @@ const dataSource = [{
   paidAt: '06/12/2023 12:00',
 },
 {
-  key: 3,
+  _id: '3',
   place: `Place ID`,
   user: 'User ID',
   userInfo: {
-      fullName: "FullName III",
-      phone: "0987773321",
-      IdentifyCard: "1234567890"
+    fullName: "FullName III",
+    phone: "0987773321",
+    IdentifyCard: "1234567890"
   },
   cart: [{
-      title: "Title III",
-      image: "",
-      price: 1,
-      numOfDays: 7,
-      maxGuests: 2,
-      qnt: 1,
-      room: "Room ID",
-      key: 1,
+    title: "Title III",
+    image: "",
+    price: 1,
+    numOfDays: 7,
+    maxGuests: 2,
+    qnt: 1,
+    room: "Room ID",
+    _id: '1',
   },
-],
+  ],
   checkIn: '07/12/2023 12:00',
   checkOut: '08/12/2023 12:00',
   paymentMethod: "Paypal",
@@ -91,23 +91,23 @@ const dataSource = [{
 export const getOrder = () => {
   const orders = dataSource;
   return ({
-  type: GET_ORDER,
-  orders: orders
+    type: GET_ORDER,
+    orders: orders
   });
 };
 
 export const updateOrder = (order) => {
 
   return ({
-  type: UPDATE_ORDER,
-  order: order
+    type: UPDATE_ORDER,
+    order: order
   });
 };
 
-export const deleteOrder = id => {
-  
+export const deleteOrder = _id => {
+
   return ({
     type: DELETE_ORDER,
-    id
+    _id
   });
 };
