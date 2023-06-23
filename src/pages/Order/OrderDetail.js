@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { MdOutlineRestore } from 'react-icons/md';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
 function OrderDetail({ actions }) {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const { order } = state || {};
   const [form] = Form.useForm();
@@ -37,11 +38,7 @@ function OrderDetail({ actions }) {
   }, []);
 
   useEffect(() => {
-    form.setFieldsValue(
-      {
-        ...book,
-      }
-    );
+    form.setFieldValue("cart", [ ...cart ]);
   }, [cart]);
 
   const deleteCartItem = (cartItemID) => {
@@ -55,15 +52,17 @@ function OrderDetail({ actions }) {
   };
 
   const onFinish = (values) => {
-
     setModal(true);
     const rangeTimeValue = values['range-time-picker'];
     delete values['range-time-picker'];
+
     const values_ = {
       ...values,
+      paidAt: typeof values["paidAt"] === 'string' ? values["paidAt"] : values["paidAt"].format(dateFormat),
       checkIn: rangeTimeValue[0].format(dateFormat),
       checkOut: rangeTimeValue[1].format(dateFormat)
     }
+
     console.log('Received values of form: ', values_);
 
     actions.updateOrder(values_);
@@ -344,7 +343,7 @@ function OrderDetail({ actions }) {
                             <Button icon={<DeleteOutlined />} onClick={() => deleteCartItem(order.cart[key].key)} />
                           </Form.Item>
                         </Col>
-                        <Divider/>
+                        <Divider />
                       </Row>
                     </Space>
                   )
@@ -375,10 +374,10 @@ function OrderDetail({ actions }) {
       </div>
 
       <Modal title="System Message" open={isModal} onCancel={() => setModal(false)} footer={[
-        <Button href='/api/admin/book' key="link">
+        <Button onClick={() => navigate('/api/admin/book')} key="link">
           Return
         </Button>,
-        <Button key="btn" onClick={() => setModal(false)} type="primary">Continue to update</Button>,
+        <Button key="btn" onClick={() => setModal(false)} type="primary">OK</Button>,
       ]}
       >
         <p>Update Order Successfully..</p>

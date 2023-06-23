@@ -5,7 +5,7 @@ import { GET_ORDER, UPDATE_ORDER, DELETE_ORDER } from '../actions/types';
 export default function postReducer(state = [], action) {
   switch (action.type) {
     case GET_ORDER:
-      return action.orders;
+      return state.length !== 0 ?  state : action.orders;
     case UPDATE_ORDER:
         const data = [...state];
         const idx = data.findIndex(order => order.key === action.order.key);
