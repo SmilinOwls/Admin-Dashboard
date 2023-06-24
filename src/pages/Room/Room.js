@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import 'react-quill/dist/quill.snow.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as RoomAction from '../../actions/RoomAction.js';
 import { UploadOutlined, SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, InputNumber, DatePicker } from 'antd';
+import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, InputNumber, DatePicker, Rate } from 'antd';
 import Highlighter from 'react-highlight-words';
 import dayjs from 'dayjs';
 import AddRoom from './AddRoom';
-import {dateFormat} from '../../utils/config';
+import { dateFormat } from '../../utils/config';
 
-function Room() {
+function Room({ rooms, actions }) {
     // Search 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -107,84 +110,50 @@ function Room() {
 
     const [form] = Form.useForm();
     const [isAdd, setIsAdd] = useState(false);
-    const [data, setData] = useState([{
-        key: 1,
-        name: `Name I`,
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-        type: 'Type I',
-        offer: 'Offer I',
-        service: 'Service I',
-        checkin: dayjs('06/12/2023 12:00', dateFormat),
-        checkout: dayjs('07/12/2023 8:00', dateFormat),
-        cost: 1,
-        bedroom: 1,
-        guest: 1
-    },
-    {
-        key: 2,
-        name: `Name II`,
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-        type: 'Type II',
-        offer: 'Offer II',
-        service: 'Service II',
-        checkin: dayjs('07/12/2023 12:00', dateFormat),
-        checkout: dayjs('08/12/2023 8:00', dateFormat),
-        cost: 2,
-        bedroom: 2,
-        guest: 2
-    },
-    ]);
+    const [data, setData] = useState();
     const [editingKey, setEditingKey] = useState('');
-    const isEditing = (record) => record.key === editingKey;
+    const isEditing = (record) => record._id === editingKey;
+
+    useEffect(() => {
+        actions.getRoom();
+    }, []);
+
+    useEffect(() => {
+        setData(rooms);
+    }, [rooms]);
+
     const edit = (record) => {
         form.setFieldsValue({
             ...record,
         });
-        setEditingKey(record.key);
+        setEditingKey(record._id);
     };
+
     const cancel = () => {
         setEditingKey('');
     };
-    const save = async (key) => {
+
+    const save = async (_id) => {
+        //  axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
+            actions.updateRoom(
+                {
+                    ...row, 
+                    _id: _id,
+                    checkIn: typeof row["checkIn"] === 'string' ? row["checkIn"] : row["checkIn"].format(dateFormat),
+                    checkOut: typeof row["checkOut"] === 'string' ? row["checkOut"] : row["checkOut"].format(dateFormat),
+
                 });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
+            setEditingKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
-        
-        //  axios handler goes here (PUT)
-
     };
-    const handleDelete = (key) => {
-        const newData = data.filter((item) => item.key !== key);
-        setData(newData);
-
-        //  axios handler goes here (DELETE)
+    const handleDelete = (_id) => {
+        // axios handler goes here (DELETE)
+        actions.deleteRoom(_id);
+        setData(rooms);
     };
     const normfile = (e) => {
         if (Array.isArray(e)) {
@@ -201,15 +170,18 @@ function Room() {
         children,
         ...restProps
     }) => {
-        var inputNode = ["cost", "bedroom", "guest"].indexOf(dataIndex) === -1 ? <Input /> : <InputNumber min={0}/>;
+        var inputNode = ["price", "countInStock", ",maxGuests", "ratings", "coupon", "numOfBed"].indexOf(dataIndex) === -1 ? <Input /> : <InputNumber min={0} />;
         switch (dataIndex) {
-            case "checkin":
+            case "ratings":
+                inputNode = <Rate />;
+                break;
+            case "checkIn":
                 inputNode = <DatePicker showTime format={dateFormat} />;
                 break;
-            case "checkout":
+            case "checkOut":
                 inputNode = <DatePicker showTime format={dateFormat} />;
                 break;
-            case "img":
+            case "photos":
                 inputNode =
                     <Upload
                         accept=".png, .jpeg"
@@ -231,8 +203,9 @@ function Room() {
                         style={{
                             margin: 0,
                         }}
-                        getValueFromEvent={dataIndex === "img" ? normfile : null}
-                        valuePropName={dataIndex === "img" ? "fileList" : "value"}
+                        getValueFromEvent={dataIndex === "photos" ? normfile : null}
+                        valuePropName={dataIndex === "photos" ? "fileList" : "value"}
+                        getValueProps={(value) => ({ value: ["checkIn", "checkOut"].includes(dataIndex) ? dayjs(value) : value })}
                         rules={[
                             {
                                 required: true,
@@ -241,14 +214,14 @@ function Room() {
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
                                     if ((
-                                            dataIndex === "checkout" &&
-                                            dayjs(getFieldValue('checkin')) &&
-                                            dayjs(getFieldValue('checkin')) > dayjs(value))
+                                        dataIndex === "checkOut" &&
+                                        dayjs(getFieldValue('checkIn')) &&
+                                        dayjs(getFieldValue('checkIn')) > dayjs(value))
                                         ||
                                         (
-                                            dataIndex === "checkin" &&
-                                            dayjs(getFieldValue('checkout')) &&
-                                            dayjs(getFieldValue('checkout')) < dayjs(value)
+                                            dataIndex === "checkIn" &&
+                                            dayjs(getFieldValue('checkOut')) &&
+                                            dayjs(getFieldValue('checkOut')) < dayjs(value)
                                         )) {
                                         return Promise.reject(new Error('The checkout date must be greater than checkin!'));
                                     }
@@ -270,81 +243,60 @@ function Room() {
     const columns = [
         {
             title: "SNo",
-            dataIndex: "key",
+            dataIndex: "_id",
             width: "5%"
         },
         {
-            title: "Name",
-            dataIndex: "name",
+            title: "Title",
+            dataIndex: "title",
             editable: true,
-            width: "10%",
+            width: "7%",
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['descend', 'ascend'],
-            ...getColumnSearchProps('name')
+            ...getColumnSearchProps('title')
         },
         {
-            title: "Image",
-            dataIndex: "img",
+            title: "Photos",
+            dataIndex: "photos",
             editable: true,
             width: "10%",
             render: (imgs, _) => {
                 return (
                     <div className='row'>
                         {imgs.map((img, idx) =>
-                            <div className='col-3 me-2'>
-                                <Image className='me-2' key={idx} width={50} height={50} src={img.thumbUrl} />
+                            <div className='col-3 me-2' key={idx}>
+                                <Image className='me-2' width={50} height={50} src={img.thumbUrl} />
                             </div>)}
                     </div>
                 )
             }
         },
         {
-            title: "Type",
-            dataIndex: "type",
+            title: "Description",
+            dataIndex: "description",
             editable: true,
-            width: "7%",
-            ...getColumnSearchProps('type')
+            width: "8%",
+            ...getColumnSearchProps('description')
         },
         {
-            title: "Offer",
-            dataIndex: "offer",
+            title: "Type Room",
+            dataIndex: "typeRoom",
             editable: true,
-            width: "7%",
-            ...getColumnSearchProps('offer')
+            width: "6%",
+            ...getColumnSearchProps('typeRoom')
         },
         {
-            title: "Service",
-            dataIndex: "service",
+            title: "Coupon",
+            dataIndex: "coupon",
             editable: true,
-            width: "7%",
-            ...getColumnSearchProps('service'),
+            width: "6%",
+            sorter: (a, b) => a.cost > b.cost,
+            sortDirections: ['ascend', 'descend']
 
         },
         {
-            title: "Checkin",
-            dataIndex: "checkin",
-            editable: true,
-            width: "8%",
-            sorter: (a, b) => a.checkin > b.checkin,
-            sortDirections: ['ascend', 'descend'],
-            render: (value, _) => {
-                return <p>{value.toDate().toLocaleString()}</p>
-            }
-        },
-        {
-            title: "Checkout",
-            dataIndex: "checkout",
-            editable: true,
-            width: "8%",
-            sorter: (a, b) => a.checkout > b.checkout,
-            sortDirections: ['ascend', 'descend'],
-            render: (value, _) => {
-                return <p>{value.toDate().toLocaleString()}</p>
-            }
-        },
-        {
-            title: "Cost",
-            dataIndex: "cost",
+            title: "Bed Number",
+            dataIndex: "numOfBed",
             editable: true,
             min: 0,
             width: "8%",
@@ -352,19 +304,44 @@ function Room() {
             sortDirections: ['ascend', 'descend']
         },
         {
-            title: "Bedroom",
-            dataIndex: "bedroom",
+            title: "Checkin",
+            dataIndex: "checkIn",
             editable: true,
             width: "8%",
-            sorter: (a, b) => a.bedroom > b.bedroom,
+            sorter: (a, b) => a.checkIn > b.checkIn,
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: "Checkout",
+            dataIndex: "checkOut",
+            editable: true,
+            width: "7%",
+            sorter: (a, b) => a.checkOut > b.checkOut,
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: "Max Guests",
+            dataIndex: "maxGuests",
+            editable: true,
+            width: "7%",
+            sorter: (a, b) => a.guest > b.guest,
             sortDirections: ['ascend', 'descend']
         },
         {
-            title: "Guest",
-            dataIndex: "guest",
+            title: "Price",
+            dataIndex: "price",
             editable: true,
-            width: "8%",
-            sorter: (a, b) => a.guest > b.guest,
+            min: 0,
+            width: "5%",
+            sorter: (a, b) => a.cost > b.cost,
+            sortDirections: ['ascend', 'descend']
+        },
+        {
+            title: "Ratings",
+            dataIndex: "ratings",
+            editable: true,
+            width: "7%",
+            sorter: (a, b) => a.bedroom > b.bedroom,
             sortDirections: ['ascend', 'descend']
         },
         {
@@ -378,7 +355,7 @@ function Room() {
                 return editable ? (
                     <span className='row'>
                         <Typography.Link
-                            onClick={() => save(record.key)}
+                            onClick={() => save(record._id)}
                             style={{
                                 marginRight: 8,
                                 textAlign: "center"
@@ -415,7 +392,7 @@ function Room() {
             fixed: "right",
             render: (_, record) => {
                 return (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
                         <span className='text-primary' style={{ cursor: "pointer" }}>Delete</span>
                     </Popconfirm>
                 )
@@ -455,6 +432,7 @@ function Room() {
                             bordered
                             dataSource={data}
                             columns={mergedColumns}
+                            rowKey={(record) => record._id}
                             rowClassName="editable-row"
                             pagination={{
                                 onChange: cancel,
@@ -483,4 +461,20 @@ function Room() {
     )
 }
 
-export default Room
+
+const mapStateToProps = state => {
+    return {
+        rooms: state.rooms
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators(RoomAction, dispatch)
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Room);

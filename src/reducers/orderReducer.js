@@ -1,4 +1,4 @@
-// orderReducer.js
+// OrderReducer.js
 
 import { GET_ORDER, UPDATE_ORDER, DELETE_ORDER } from '../actions/types';
 

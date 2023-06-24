@@ -18,6 +18,7 @@ export const formItemLayout = {
         }
     }
 };
+
 export const tailFormItemLayout = {
     wrapperCol: {
         xs: {
@@ -31,11 +32,4 @@ export const tailFormItemLayout = {
     }
 };
 
-export const normFile = (e) => {
-    console.log('Upload event:', e);
-    if (Array.isArray(e)) {
-        return e;
-    }
-    return e?.fileList;
-};
 

@@ -122,8 +122,6 @@ function Blog({blogs, actions}) {
     const isEditing = (record) => record._id === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
-            title: '',
-            fullText: '',
             ...record,
         });
         setEditingKey(record._id);

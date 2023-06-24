@@ -1,4 +1,4 @@
-// blogReducer.js
+// BlogReducer.js
 
 import { GET_BLOG, UPDATE_BLOG, DELETE_BLOG, ADD_BLOG }from '../actions/types';
 
