@@ -11,3 +11,8 @@ export const GET_ROOM = 'GET_ROOM';
 export const ADD_ROOM = 'ADD_ROOM';
 export const UPDATE_ROOM = 'UPDATE_ROOM';
 export const DELETE_ROOM = 'DELETE_ROOM';
+
+export const GET_PLACE = 'GET_PLACE';
+export const ADD_PLACE = 'ADD_PLACE';
+export const UPDATE_PLACE = 'UPDATE_PLACE';
+export const DELETE_PLACE = 'DELETE_PLACE';

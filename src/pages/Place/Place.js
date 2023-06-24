@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import 'react-quill/dist/quill.snow.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as PlaceAction from '../../actions/PlaceAction';
 import { UploadOutlined, SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, Rate } from 'antd';
+import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Space, Rate, InputNumber } from 'antd';
 import Highlighter from 'react-highlight-words';
 import AddPlace from './AddPlace';
 
-function Place() {
+function Place({ places, actions }) {
     // Search 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -105,80 +108,49 @@ function Place() {
 
     const [form] = Form.useForm();
     const [isAdd, setIsAdd] = useState(false);
-    const [data, setData] = useState([{
-        key: 1,
-        name: `Name I`,
-        address: 'Adresss I',
-        identifier: 'ID I',
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-        description: 'Description I',
-        addition: 'Addition I',
-        rating: 4,
-    },
-    {
-        key: 2,
-        name: `Name II`,
-        address: 'Adresss II',
-        identifier: 'ID II',
-        img: [{
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }],
-        description: 'Description II',
-        addition: 'Addition II',
-        rating: 5,
-    },
-    ]);
+    const [data, setData] = useState();
     const [editingKey, setEditingKey] = useState('');
-    const isEditing = (record) => record.key === editingKey;
+    const isEditing = (record) => record._id === editingKey;
+
+    useEffect(() => {
+        actions.getPlace();
+    }, []);
+
+    useEffect(() => {
+        setData(places);
+    }, [places]);
+
     const edit = (record) => {
         form.setFieldsValue({
-            title: '',
-            content: '',
             ...record,
         });
-        setEditingKey(record.key);
+        setEditingKey(record._id);
     };
     const cancel = () => {
         setEditingKey('');
     };
-    const save = async (key) => {
+    const save = async (_id) => {
+        //  axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
+            console.log(row);
+            actions.updatePlace(
+                {
+                    ...row, 
+                    _id: _id,
+                    placePic: row.placePic[0].originFileObj ? URL.createObjectURL(row.placePic[0].originFileObj) : row.placePic
                 });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
+            setEditingKey('');
+            
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
 
-        //  axios handler goes here (PUT)
-
     };
-    const handleDelete = (key) => {
-        const newData = data.filter((item) => item.key !== key);
-        setData(newData);
-
-        //  axios handler goes here (DELETE)
+    const handleDelete = (_id) => {
+         // axios handler goes here (DELETE)
+         actions.deletePlace(_id);
+         setData(places);
     };
     const normfile = (e) => {
         if (Array.isArray(e)) {
@@ -197,15 +169,19 @@ function Place() {
     }) => {
         var inputNode = <Input />;
         switch (dataIndex) {
-            case "rating":
+            case "numReview":
+                inputNode = <InputNumber/>
+                break;
+            case "ratings":
                 inputNode = <Rate />;
                 break;
-            case "img":
+            case "placePic":
                 inputNode =
                     <Upload
                         accept=".png, .jpeg"
                         listType="picture-card"
                         beforeUpload={() => false}
+                        maxCount={1}
                     >
                         <Button icon={<UploadOutlined />}>Upload</Button>
                     </Upload>;
@@ -222,8 +198,9 @@ function Place() {
                         style={{
                             margin: 0,
                         }}
-                        getValueFromEvent={dataIndex === "img" ? normfile : null}
-                        valuePropName={dataIndex === "img" ? "fileList" : "value"}
+                        getValueFromEvent={dataIndex === "placePic" ? normfile : null}
+                        valuePropName={dataIndex === "placePic" ? "fileList" : "value"}
+                        getValueProps={(value) => ({ value: ["placePic"].includes(dataIndex) ? [value] : value })}
                         rules={[
                             {
                                 required: true,
@@ -242,7 +219,7 @@ function Place() {
     const columns = [
         {
             title: "SNo",
-            dataIndex: "key",
+            dataIndex: "_id",
             width: "5%"
         },
         {
@@ -259,27 +236,26 @@ function Place() {
             dataIndex: "address",
             editable: true,
             width: "10%",
-            ...getColumnSearchProps('content')
+            ...getColumnSearchProps('address')
         },
         {
-            title: "Identifier",
-            dataIndex: "identifier",
+            title: "Country",
+            dataIndex: "country",
             editable: true,
             width: "10%",
-            ...getColumnSearchProps('identifier')
+            ...getColumnSearchProps('country')
         },
         {
-            title: "Image",
-            dataIndex: "img",
+            title: "Place Picture",
+            dataIndex: "placePic",
             editable: true,
-            width: "20%",
+            width: "10%",
             render: (imgs, _) => {
                 return (
                     <div className='row'>
-                        {imgs.map((img, idx) =>
-                            <div className='col-3 me-2'>
-                                <Image className='me-2' key={idx} width={50} height={50} src={img.thumbUrl} />
-                            </div>)}
+                        <div className='col-3 me-2'>
+                            <Image className='me-2' width={50} height={50} src={imgs} />
+                        </div>
                     </div>
                 )
             }
@@ -292,8 +268,15 @@ function Place() {
             ...getColumnSearchProps('description')
         },
         {
-            title: "Rating",
-            dataIndex: "rating",
+            title: "Extra Info",
+            dataIndex: "extraInfo",
+            editable: true,
+            width: "10%",
+            ...getColumnSearchProps('extraInfo')
+        },
+        {
+            title: "Ratings",
+            dataIndex: "ratings",
             editable: true,
             width: "10%",
             sorter: (a, b) => a.rating - b.rating,
@@ -323,15 +306,15 @@ function Place() {
                 return record.rating === value;
             },
             render: (value) => (
-                <Rate value={value} className='fs-5'/>
+                <Rate value={value} className='fs-5' />
             )
         },
         {
-            title: "Addition",
-            dataIndex: "addition",
+            title: "Review Number",
+            dataIndex: "numReviews",
             editable: true,
             width: "10%",
-            ...getColumnSearchProps('addition')
+            ...getColumnSearchProps('numReviews')
         },
         {
             title: 'Operation',
@@ -344,7 +327,7 @@ function Place() {
                 return editable ? (
                     <span className='row'>
                         <Typography.Link
-                            onClick={() => save(record.key)}
+                            onClick={() => save(record._id)}
                             style={{
                                 marginRight: 8,
                                 textAlign: "center"
@@ -378,7 +361,7 @@ function Place() {
             colSpan: 0,
             render: (_, record) => {
                 return (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
                         <span className='text-primary' style={{ cursor: "pointer" }}>Delete</span>
                     </Popconfirm>
                 )
@@ -418,6 +401,7 @@ function Place() {
                             bordered
                             dataSource={data}
                             columns={mergedColumns}
+                            rowKey={(record) => record._id}
                             rowClassName="editable-row"
                             pagination={{
                                 onChange: cancel,
@@ -438,10 +422,25 @@ function Place() {
                     >
                         <ArrowLeftOutlined /><span className='ms-2'>Back to Place List</span>
                     </div>
-                    <AddPlace />
+                    <AddPlace setIsAdd={setIsAdd} />
                 </>)}
         </div>
     )
 }
 
-export default Place
+const mapStateToProps = state => {
+    return {
+        places: state.places
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators(PlaceAction, dispatch)
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Place);

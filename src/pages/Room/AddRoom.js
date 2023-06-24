@@ -6,7 +6,7 @@ import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/ic
 import { Form, Input, Upload, DatePicker, Button, Row, Col, Image, InputNumber, Select, Rate, notification } from 'antd';
 const { RangePicker } = DatePicker;
 
-function AddRoom({setIsAdd}) {
+function AddRoom() {
     const dispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
     const [form] = Form.useForm();
@@ -25,12 +25,12 @@ function AddRoom({setIsAdd}) {
         const values_ = {
             ...values,
             'checkIn': rangeTimeValue === '' ? '' : rangeTimeValue[0].format('MM/DD/YYYY HH:mm'),
-            'checkOut': rangeTimeValue === '' ? '' : rangeTimeValue[1].format('MM/DD/YYYY HH:mm')
+            'checkOut': rangeTimeValue === '' ? '' : rangeTimeValue[1].format('MM/DD/YYYY HH:mm'),
+            'photos': values.photos.map(photo => URL.createObjectURL(photo.originFileObj))
         }
         console.log('Received values of form: ', values_);
-        dispatch(addRoom(values));
         try {
-            dispatch(addRoom(values));
+            dispatch(addRoom(values_));
             api["success"]({
                 message: 'Add Room Successfully!',
                 description:
@@ -113,6 +113,12 @@ function AddRoom({setIsAdd}) {
                             label="Photos"
                             valuePropName='fileList'
                             getValueFromEvent={normFile}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please upload photos',
+                                },
+                            ]}
                         >
                             <Upload.Dragger
                                 accept=".png, .jpeg"

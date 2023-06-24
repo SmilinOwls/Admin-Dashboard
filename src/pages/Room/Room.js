@@ -137,13 +137,14 @@ function Room({ rooms, actions }) {
         //  axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
+            console.log(row);
             actions.updateRoom(
                 {
-                    ...row, 
+                    ...row,
                     _id: _id,
                     checkIn: typeof row["checkIn"] === 'string' ? row["checkIn"] : row["checkIn"].format(dateFormat),
                     checkOut: typeof row["checkOut"] === 'string' ? row["checkOut"] : row["checkOut"].format(dateFormat),
-
+                    photos: row.photos.map(photo => photo.originFileObj ? URL.createObjectURL(photo.originFileObj) : photo)
                 });
             setEditingKey('');
         } catch (errInfo) {
@@ -205,7 +206,12 @@ function Room({ rooms, actions }) {
                         }}
                         getValueFromEvent={dataIndex === "photos" ? normfile : null}
                         valuePropName={dataIndex === "photos" ? "fileList" : "value"}
-                        getValueProps={(value) => ({ value: ["checkIn", "checkOut"].includes(dataIndex) ? dayjs(value) : value })}
+                        getValueProps={(value) => {
+                            if (["checkIn", "checkOut"].includes(dataIndex)) {
+                                return { value: dayjs(value) }
+                            } 
+                            return { value: value }
+                        }}
                         rules={[
                             {
                                 required: true,
@@ -263,10 +269,12 @@ function Room({ rooms, actions }) {
             render: (imgs, _) => {
                 return (
                     <div className='row'>
-                        {imgs && imgs.map((img, idx) =>
-                            <div className='col-3 me-2' key={idx}>
-                                <Image className='me-2' width={50} height={50} src={img.thumbUrl} />
-                            </div>)}
+                        {imgs.map((img, idx) => (
+                            <div className='col-3 me-4' key={idx}>
+                                <Image className='me-2' width={50} height={50} src={img} />
+                            </div>
+                        )
+                        )}
                     </div>
                 )
             }
@@ -315,7 +323,7 @@ function Room({ rooms, actions }) {
             title: "Checkout",
             dataIndex: "checkOut",
             editable: true,
-            width: "7%",
+            width: "8%",
             sorter: (a, b) => a.checkOut - b.checkOut,
             sortDirections: ['ascend', 'descend'],
         },
@@ -348,7 +356,7 @@ function Room({ rooms, actions }) {
             dataIndex: 'operation',
             colSpan: 2,
             fixed: "right",
-            width: "8%",
+            width: "7%",
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -453,7 +461,7 @@ function Room({ rooms, actions }) {
                         >
                             <ArrowLeftOutlined /><span className='ms-2'>Back to Room List</span>
                         </div>
-                        <AddRoom setIsAdd={setIsAdd}/>
+                        <AddRoom setIsAdd={setIsAdd} />
                     </>)
             }
         </div>

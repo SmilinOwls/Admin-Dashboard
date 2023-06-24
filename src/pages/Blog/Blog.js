@@ -9,7 +9,7 @@ import { Table, Popconfirm, Form, Input, Typography, Image, Upload, Button, Spac
 import Highlighter from 'react-highlight-words';
 import AddBlog from './AddBlog';
 
-function Blog({blogs, actions}) {
+function Blog({ blogs, actions }) {
     // Search 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -133,13 +133,13 @@ function Blog({blogs, actions}) {
         // axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            actions.updateBlog({...row, _id: _id});
+            actions.updateBlog({ ...row, _id: _id });
             setEditingKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
 
-        
+
     };
     const handleDelete = (_id) => {
         // axios handler goes here (DELETE)
@@ -170,8 +170,10 @@ function Blog({blogs, actions}) {
             case "image":
                 inputNode =
                     <Upload
+                        accept=".png, .jpeg"
                         listType="picture-card"
                         beforeUpload={() => false}
+                        maxCount={1}
                     >
                         <Button icon={<UploadOutlined />}>Upload</Button>
                     </Upload>;
@@ -263,7 +265,7 @@ function Blog({blogs, actions}) {
                             Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                        <span style={{cursor: "pointer", textAlign: "center"}}>Cancel</span>
+                            <span style={{ cursor: "pointer", textAlign: "center" }}>Cancel</span>
                         </Popconfirm>
                     </span>
                 ) : (
@@ -272,7 +274,7 @@ function Blog({blogs, actions}) {
                             <>
                                 <span className='d-flex justify-content-center'>
                                     <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                    <span style={{cursor: "pointer"}}>Edit</span>
+                                        <span style={{ cursor: "pointer" }}>Edit</span>
                                     </Typography.Link>
                                 </span>
                             </>
@@ -289,7 +291,7 @@ function Blog({blogs, actions}) {
             render: (_, record) => {
                 return (
                     <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
-                        <span className='text-primary' style={{cursor: "pointer"}}>Delete</span>
+                        <span className='text-primary' style={{ cursor: "pointer" }}>Delete</span>
                     </Popconfirm>
                 )
             }
@@ -328,7 +330,7 @@ function Blog({blogs, actions}) {
                             bordered
                             dataSource={data}
                             columns={mergedColumns}
-                            rowKey={( record ) => record._id}
+                            rowKey={(record) => record._id}
                             rowClassName="editable-row"
                             pagination={{
                                 onChange: cancel,
@@ -367,7 +369,7 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default  connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(Blog);

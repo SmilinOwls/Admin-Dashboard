@@ -6,12 +6,9 @@ const dataSource = [{
     place: 'Place ID',
     title: 'Title I',
     description: 'Description I',
-    photos: [{
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }],
+    photos: ['https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+    ],
     perks: ['perk I', 'perk II'],
     typeRoom: 'Type I',
     coupon: 1,
@@ -22,18 +19,13 @@ const dataSource = [{
     ratings: 1,
     maxGuests: 1,
     countInStock: 1,
-},{
+}, {
     _id: 2,
     owner: 'User ID',
     place: 'Place ID',
     title: 'Title II',
     description: 'Description II',
-    photos: [{
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }],
+    photos: ['https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'],
     perks: ['perk I', 'perk II'],
     typeRoom: 'Type I',
     coupon: 1,
@@ -44,18 +36,13 @@ const dataSource = [{
     ratings: 1,
     maxGuests: 1,
     countInStock: 1,
-},{
+}, {
     _id: 3,
     owner: 'User ID',
     place: 'Place ID',
     title: 'Title III',
     description: 'Description III',
-    photos: [{
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }],
+    photos: ['https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'],
     perks: ['perk I', 'perk II'],
     typeRoom: 'Type III',
     coupon: 1,
@@ -85,7 +72,7 @@ export const addRoom = (room) => {
 };
 
 export const updateRoom = (room) => {
-
+    console.log(room);
     return ({
         type: UPDATE_ROOM,
         room: room
