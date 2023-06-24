@@ -15,12 +15,20 @@ function BlogSummary({ formData }) {
     const onFinish = (values) => {
         // axios handler goes here (POST)
         console.log('Success:', values);
-        dispatch(addBlog(values));
-        api["success"]({
-            message: 'Add Blog Successfully!',
-            description:
-                'Return to the blog list to see any reflecting changes',
-        });
+        try {
+            dispatch(addBlog(values));
+            api["success"]({
+                message: 'Add Blog Successfully!',
+                description:
+                    'Return to the blog list to see any reflecting changes',
+            });
+        } catch (error) {
+            api["error"]({
+                message: 'Error detected!',
+                description:
+                    'An error happens when adding a blog.',
+            });
+        }
     };
     return (
         <div className='row'>

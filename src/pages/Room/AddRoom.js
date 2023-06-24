@@ -1,57 +1,15 @@
-import React, { useState } from 'react';
-import { InboxOutlined } from '@ant-design/icons';
-import { Form, Input, Upload, DatePicker, Button, Modal, Row, Col, Image, InputNumber } from 'antd';
+import React from 'react';
+import {formItemLayout, tailFormItemLayout} from '../../utils/config'
+import { useDispatch, } from 'react-redux';
+import { addRoom } from '../../actions/RoomAction';
+import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Input, Upload, DatePicker, Button, Row, Col, Image, InputNumber, Select, Rate, notification } from 'antd';
 const { RangePicker } = DatePicker;
 
-function AddPlace() {
+function AddRoom({setIsAdd}) {
+    const dispatch = useDispatch();
+    const [api, contextHolder] = notification.useNotification();
     const [form] = Form.useForm();
-    const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        image: [],
-        type: '',
-        offer: '',
-        service: '',
-        checkin: Date(Date.now()).toLocaleString(),
-        checkout: Date(Date.now()).toLocaleString(),
-        cost: 0,
-        bedroom: 0,
-        guest: 0
-    });
-    const [isModal, setModal] = useState(false);
-
-    const formItemLayout = {
-        labelCol: {
-            xs: {
-                span: 24
-            },
-            sm: {
-                span: 6
-            }
-        },
-
-        wrapperCol: {
-            xs: {
-                span: 24
-            },
-            sm: {
-                span: 16
-            }
-        }
-    };
-    const tailFormItemLayout = {
-        wrapperCol: {
-            xs: {
-                span: 24,
-                offset: 0,
-            },
-            sm: {
-                span: 16,
-                offset: 6
-            }
-        }
-    };
-
     const normFile = (e) => {
         console.log('Upload event:', e);
         if (Array.isArray(e)) {
@@ -60,28 +18,36 @@ function AddPlace() {
         return e?.fileList;
     };
 
-    const anotherHandle = () => {
-        form.resetFields();
-        setModal(false);
-    };
-
     const onFinish = (values) => {
-        setModal(true);
-        const rangeTimeValue = values['range-time-picker'];
-        delete values['range-time-picker'];
+        //  axios handler goes here (POST)
+        const rangeTimeValue = values['range-time-picker'] === undefined ? '' : values['range-time-picker'];
+        if(rangeTimeValue) delete values['range-time-picker'];
         const values_ = {
             ...values,
-            'checkin': rangeTimeValue[0].format('MM/DD/YYYY HH:mm'),
-            'checkout': rangeTimeValue[1].format('MM/DD/YYYY HH:mm')
+            'checkIn': rangeTimeValue === '' ? '' : rangeTimeValue[0].format('MM/DD/YYYY HH:mm'),
+            'checkOut': rangeTimeValue === '' ? '' : rangeTimeValue[1].format('MM/DD/YYYY HH:mm')
         }
         console.log('Received values of form: ', values_);
-        setFormData({ ...values_ });
-
-        //  axios handler goes here (POST)
+        dispatch(addRoom(values));
+        try {
+            dispatch(addRoom(values));
+            api["success"]({
+                message: 'Add Room Successfully!',
+                description:
+                    'Return to the blog list to see any reflecting changes',
+            });
+        } catch (error) {
+            api["error"]({
+                message: 'Error detected!',
+                description:
+                    'An error happens when adding a room.',
+            });
+        }
     };
 
     return (
         <div className='container'>
+            {contextHolder}
             <h3 className="mb-3">Add A New Room</h3>
             <div className='row'>
                 <div className='col-7'>
@@ -91,14 +57,34 @@ function AddPlace() {
                         onFinish={onFinish}
                         style={{ maxWidth: 600 }}
                         scrollToFirstError
+                        initialValues={{
+                            typeRoom: "Standard",
+                            coupon: 0,
+                            numOfBed: 0,
+                            ratings: 0,
+                            countInStock: 0
+                        }}
                     >
                         <Form.Item
-                            name="name"
-                            label="Name"
+                            name="owner"
+                            label="Owner"
+                        >
+                            <Select />
+                        </Form.Item>
+                        <Form.Item
+                            name="place"
+                            label="Place"
+                            
+                        >
+                            <Select />
+                        </Form.Item>
+                        <Form.Item
+                            name="title"
+                            label="Title"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input Name',
+                                    message: 'Please input Title',
                                 },
                             ]}
                         >
@@ -117,18 +103,18 @@ function AddPlace() {
                             <Input.TextArea showCount maxLength={100} />
                         </Form.Item>
                         <Form.Item
-                            name="image"
-                            label="Image"
+                            name="typeRoom"
+                            label="Type Room"
+                        >
+                            <Input placeholder='Standard' />
+                        </Form.Item>
+                        <Form.Item
+                            name="photos"
+                            label="Photos"
                             valuePropName='fileList'
                             getValueFromEvent={normFile}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please upload image',
-                                },
-                            ]}
                         >
-                            <Upload.Dragger 
+                            <Upload.Dragger
                                 accept=".png, .jpeg"
                                 listType='picture'
                                 beforeUpload={() => false}>
@@ -139,87 +125,153 @@ function AddPlace() {
                                 <p className="ant-upload-hint">Support for a single or bulk upload.</p>
                             </Upload.Dragger>
                         </Form.Item>
-                        <Form.Item
-                            name="type"
-                            label="Type"
+                        <Form.List
+                            name="perks"
                             rules={[
                                 {
-                                    required: true,
-                                    message: 'Please input Type',
+                                    validator: async (_, names) => {
+                                        if (!names || names.length < 1) {
+                                            return Promise.reject(new Error('At least 1 perk'));
+                                        }
+                                    },
+                                },
+                            ]}
+                            initialValue={[""]}
+                        >
+                            {(fields, { add, remove }, { errors }) => (
+                                <>
+                                    {fields.map((field, index) => (
+                                        <Form.Item
+                                            {...(index === 0 ? formItemLayout : tailFormItemLayout)}
+                                            label={index === 0 ? 'Perks' : ''}
+                                            required={true}
+                                            key={field.key}
+                                        >
+                                            <Form.Item
+                                                {...field}
+                                                validateTrigger={['onChange', 'onBlur']}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        whitespace: true,
+                                                        message: "Please input perk or delete this field.",
+                                                    },
+                                                ]}
+                                                noStyle
+                                            >
+                                                <Input
+                                                    style={{
+                                                        width: '60%',
+                                                    }}
+                                                />
+                                            </Form.Item>
+                                            {fields.length > 1 ? (
+                                                <MinusCircleOutlined
+                                                    className="dynamic-delete-button"
+                                                    onClick={() => remove(field.name)}
+                                                />
+                                            ) : null}
+                                        </Form.Item>
+                                    ))}
+                                    <Form.Item {...tailFormItemLayout}>
+                                        <Button
+                                            type="dashed"
+                                            onClick={() => add()}
+                                            style={{
+                                                width: '60%',
+                                            }}
+                                            icon={<PlusOutlined />}
+                                        >
+                                            Add field
+                                        </Button>
+                                        <Form.ErrorList errors={errors} />
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                        <Form.Item
+                            name="coupon"
+                            label="Coupon"
+                            rules={[
+                                {
+                                    type: 'number',
+                                    message: 'Please input Coupon',
                                 },
                             ]}
                         >
-                            <Input />
+                            <InputNumber min={0}/>
                         </Form.Item>
                         <Form.Item
-                            name="offer"
-                            label="Offer"
+                            name="numOfBed"
+                            label="Bed Number"
                             rules={[
                                 {
-                                    required: true,
-                                    message: 'Please input Offer',
+                                    type: 'number',
+                                    message: 'Please input Bed Number',
                                 },
                             ]}
                         >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="service"
-                            label="Service"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input Service',
-                                },
-                            ]}
-                        >
-                            <Input />
+                            <InputNumber min={0}/>
                         </Form.Item>
                         <Form.Item
                             name="range-time-picker"
                             label="Check[in][out]"
                             rules={[{
-                                required: true,
                                 type: 'array',
                                 message: 'Please select Time'
                             }]}>
                             <RangePicker showTime format="YYYY-MM-DD HH:mm" />
                         </Form.Item>
                         <Form.Item
-                            name="cost"
-                            label="Cost"
+                            name="maxGuests"
+                            label="Max Guests"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input Cost',
+                                    type: 'number',
+                                    message: 'Please input Max Guests',
                                 },
                             ]}
                         >
-                            <InputNumber  min={0} />
+                            <InputNumber min={0}/>
                         </Form.Item>
                         <Form.Item
-                            name="bedroom"
-                            label="Bedroom Number"
+                            name="price"
+                            label="Price"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input number of Bedroom',
-                                },
-                            ]}
-                        >
-                            <InputNumber  min={0} />
-                        </Form.Item>
-                        <Form.Item
-                            name="guest"
-                            label="Guest Number"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input number of Guest',
+                                    type: 'number',
+                                    message: 'Please input Price',
                                 },
                             ]}
                         >
                             <InputNumber min={0} />
+                        </Form.Item>
+                       
+                        <Form.Item
+                            name="ratings"
+                            label="Ratings"
+                            rules={[
+                                {
+                                    type: 'number',
+                                    message: 'Please select Ratings',
+                                },
+                            ]}
+                        >
+                            <Rate />
+                        </Form.Item>
+                        <Form.Item
+                            name="countInStock"
+                            label="Count In Stock"
+                            rules={[
+                                {
+                                    type: 'number',
+                                    message: 'Please input count in stock',
+                                },
+                            ]}
+                        >
+                            <InputNumber min={0}/>
                         </Form.Item>
                         <Form.Item {...tailFormItemLayout}>
                             <Row gutter={8}>
@@ -240,19 +292,9 @@ function AddPlace() {
                 </div>
                 <Image className='col-5' style={{ mixBlendMode: "multiply" }} width={420} src='https://img.freepik.com/free-vector/hotel-room-with-bed-interior-design-background-window-with-curtains-bed-with-pillows-towels-lamp-happy-holiday-vacation-staying-modern-hotel-with-view-city_575670-2063.jpg' />
             </div>
-
-            <Modal title="System Message" open={isModal} onCancel={() => setModal(false)} footer={[
-                <Button href='/admin/room' key="link">
-                    Return
-                </Button>,
-                <Button key="another" onClick={anotherHandle} type="primary">Add A New One</Button>,
-            ]}
-            >
-                <p>Add New Room Successfully..</p>
-                <p>Come back to the list to see any changes or continue to add another one!</p>
-            </Modal>
+            
         </div>
     )
 }
 
-export default AddPlace
+export default AddRoom

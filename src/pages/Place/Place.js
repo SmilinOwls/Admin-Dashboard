@@ -296,7 +296,7 @@ function Place() {
             dataIndex: "rating",
             editable: true,
             width: "10%",
-            sorter: (a, b) => a.rating > b.rating,
+            sorter: (a, b) => a.rating - b.rating,
             sortDirections: ['ascend', 'descend'],
             filters: [{
                 text: 1,

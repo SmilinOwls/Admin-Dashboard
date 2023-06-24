@@ -251,7 +251,7 @@ function Room({ rooms, actions }) {
             dataIndex: "title",
             editable: true,
             width: "7%",
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => a.title.localeCompare(b.title),
             sortDirections: ['descend', 'ascend'],
             ...getColumnSearchProps('title')
         },
@@ -259,11 +259,11 @@ function Room({ rooms, actions }) {
             title: "Photos",
             dataIndex: "photos",
             editable: true,
-            width: "10%",
+            width: "9%",
             render: (imgs, _) => {
                 return (
                     <div className='row'>
-                        {imgs.map((img, idx) =>
+                        {imgs && imgs.map((img, idx) =>
                             <div className='col-3 me-2' key={idx}>
                                 <Image className='me-2' width={50} height={50} src={img.thumbUrl} />
                             </div>)}
@@ -289,8 +289,8 @@ function Room({ rooms, actions }) {
             title: "Coupon",
             dataIndex: "coupon",
             editable: true,
-            width: "6%",
-            sorter: (a, b) => a.cost > b.cost,
+            width: "8%",
+            sorter: (a, b) => a.cost - b.cost,
             sortDirections: ['ascend', 'descend']
 
         },
@@ -300,7 +300,7 @@ function Room({ rooms, actions }) {
             editable: true,
             min: 0,
             width: "8%",
-            sorter: (a, b) => a.cost > b.cost,
+            sorter: (a, b) => a.numOfBed - b.numOfBed,
             sortDirections: ['ascend', 'descend']
         },
         {
@@ -308,7 +308,7 @@ function Room({ rooms, actions }) {
             dataIndex: "checkIn",
             editable: true,
             width: "8%",
-            sorter: (a, b) => a.checkIn > b.checkIn,
+            sorter: (a, b) => a.checkIn - b.checkIn,
             sortDirections: ['ascend', 'descend'],
         },
         {
@@ -316,7 +316,7 @@ function Room({ rooms, actions }) {
             dataIndex: "checkOut",
             editable: true,
             width: "7%",
-            sorter: (a, b) => a.checkOut > b.checkOut,
+            sorter: (a, b) => a.checkOut - b.checkOut,
             sortDirections: ['ascend', 'descend'],
         },
         {
@@ -324,24 +324,23 @@ function Room({ rooms, actions }) {
             dataIndex: "maxGuests",
             editable: true,
             width: "7%",
-            sorter: (a, b) => a.guest > b.guest,
+            sorter: (a, b) => a.maxGuests - b.maxGuests,
             sortDirections: ['ascend', 'descend']
         },
         {
             title: "Price",
             dataIndex: "price",
             editable: true,
-            min: 0,
-            width: "5%",
-            sorter: (a, b) => a.cost > b.cost,
+            width: "8%",
+            sorter: (a, b) => a.price - b.price,
             sortDirections: ['ascend', 'descend']
         },
         {
             title: "Ratings",
             dataIndex: "ratings",
             editable: true,
-            width: "7%",
-            sorter: (a, b) => a.bedroom > b.bedroom,
+            width: "6%",
+            sorter: (a, b) => a.ratings - b.ratings,
             sortDirections: ['ascend', 'descend']
         },
         {
@@ -454,7 +453,7 @@ function Room({ rooms, actions }) {
                         >
                             <ArrowLeftOutlined /><span className='ms-2'>Back to Room List</span>
                         </div>
-                        <AddRoom />
+                        <AddRoom setIsAdd={setIsAdd}/>
                     </>)
             }
         </div>

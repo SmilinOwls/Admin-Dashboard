@@ -105,7 +105,7 @@ function OrderDetail({ actions }) {
           <Form
             {...formItemLayout}
             form={form}
-
+            initialValues={{orderStatus: "Processing", taxPrice: 0}}
             onFinish={onFinish}
             style={{ maxWidth: 600 }}
             scrollToFirstError
@@ -115,6 +115,11 @@ function OrderDetail({ actions }) {
               <Form.Item
                 name="user"
                 label="User ID"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
               >
                 <span>{order.user}</span>
               </Form.Item>
@@ -137,10 +142,11 @@ function OrderDetail({ actions }) {
                   {
                     required: true,
                     message: 'Please input Phone',
+                    pattern: new RegExp(/^[0-9]+$/)
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={10}/>
               </Form.Item>
               <Form.Item
                 label="Identify Card"
@@ -161,12 +167,22 @@ function OrderDetail({ actions }) {
               <Form.Item
                 name="_id"
                 label="Order ID"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
               >
                 <span>{book._id}</span>
               </Form.Item>
               <Form.Item
                 name="place"
                 label="Place ID"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
               >
                 <span>{book.place}</span>
               </Form.Item>
@@ -226,9 +242,7 @@ function OrderDetail({ actions }) {
                 label="Tax Price"
                 rules={[
                   {
-                    required: true,
                     type: 'number',
-                    message: 'Please input Tax Price',
                   },
 
                 ]}
@@ -240,9 +254,7 @@ function OrderDetail({ actions }) {
                 label="Total Price"
                 rules={[
                   {
-                    required: true,
                     type: 'number',
-                    message: 'Please input Total Price',
                   },
                 ]}
               >
@@ -288,6 +300,11 @@ function OrderDetail({ actions }) {
                             {...restField}
                             label="Room ID"
                             name={[name, 'room']}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
                           >
                             <Input placeholder="Room ID" readOnly />
                           </Form.Item>
@@ -324,9 +341,7 @@ function OrderDetail({ actions }) {
                             name={[name, 'numOfDays']}
                             rules={[
                               {
-                                required: true,
                                 type: 'number',
-                                message: 'Please input Number of Days',
                               },
                             ]}
                           >
@@ -352,9 +367,7 @@ function OrderDetail({ actions }) {
                             name={[name, 'maxGuests']}
                             rules={[
                               {
-                                required: true,
                                 type: 'number',
-                                message: 'Please input Max Guests',
                               },
                             ]}
                           >
