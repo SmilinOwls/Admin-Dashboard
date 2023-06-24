@@ -14,9 +14,13 @@ function BlogSummary({ formData }) {
     };
     const onFinish = (values) => {
         // axios handler goes here (POST)
-        console.log('Success:', values);
+        const values_ = {
+            ...values,
+            'image': URL.createObjectURL(values.image[0].originFileObj)
+        }
+        console.log('Received values of form: ', values_);
         try {
-            dispatch(addBlog(values));
+            dispatch(addBlog(values_));
             api["success"]({
                 message: 'Add Blog Successfully!',
                 description:

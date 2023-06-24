@@ -19,15 +19,15 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/api/admin' element={<MainLayout />}>
+        <Route path='/api' element={<MainLayout />}>
           <Route index element={<Dashboard />} />
-          <Route path='user' element={<User />} />
-          <Route path='blog' element={<Blog />} />
-          <Route path='place' element={<Place />} />
-          <Route path='room' element={<Room />} />
+          <Route path='user/admin' element={<User />} />
+          <Route path='blog/admin' element={<Blog />} />
+          <Route path='place/admin' element={<Place />} />
+          <Route path='room/admin' element={<Room />} />
           <Route path='book' element={<Outlet />}>
             <Route index element={<Order />} />
-            <Route path=':id' element={<OrderDetail />} />
+            <Route path='admin/:id' element={<OrderDetail />} />
           </Route>
         </Route>
       </Routes>

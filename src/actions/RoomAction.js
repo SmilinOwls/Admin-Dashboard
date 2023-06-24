@@ -72,7 +72,7 @@ export const addRoom = (room) => {
 };
 
 export const updateRoom = (room) => {
-    console.log(room);
+
     return ({
         type: UPDATE_ROOM,
         room: room

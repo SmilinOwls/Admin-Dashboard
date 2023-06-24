@@ -49,29 +49,29 @@ function MainLayout() {
               label: 'Dashboard',
             },
             {
-              key: 'user',
+              key: 'user/admin',
               icon: <UserOutlined className="fs-4" />,
               label: 'User',
             },
             {
-              key: 'catalog',
+              key: 'catalog/admin',
               icon: <BiCategory className="fs-4" />,
               label: 'Catalog',
               children: [
                 {
-                  key: 'place',
+                  key: 'place/admin',
                   icon: <FaHotel className="fs-4" />,
                   label: 'Place'
                 },
                 {
-                  key: 'room',
+                  key: 'room/admin',
                   icon: <MdBedroomParent className="fs-4" />,
                   label: 'Room'
                 },
               ]
             },
             {
-              key: 'blog',
+              key: 'blog/admin',
               icon: <FaBloggerB className="fs-4" />,
               label: 'Blog',
             },
@@ -123,7 +123,7 @@ function MainLayout() {
                     <Link
                       className="dropdown-item py-1 mb-1 z-2"
                       style={{ height: "auto", lineHeight: "20px" }}
-                      to="/api/admin"
+                      to="/api/user/me/profile"
                     >
                       View Profile
                     </Link>

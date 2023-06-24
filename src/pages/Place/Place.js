@@ -133,7 +133,6 @@ function Place({ places, actions }) {
         //  axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            console.log(row);
             actions.updatePlace(
                 {
                     ...row, 

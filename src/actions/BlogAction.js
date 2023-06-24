@@ -4,34 +4,19 @@ const dataSource = [{
     _id: '1',
     title: `A`,
     fullText: '<b>Hotel Blog</b>',
-    image: [{
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }],
+    image: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 },
 {
     _id: '2',
     title: `B`,
     fullText: '<b>Hotel Blog</b>',
-    image: [{
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }],
+    image: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 },
 {
     _id: '3',
     title: `C`,
     fullText: '<b>Hotel Blog</b>',
-    image: [{
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }],
+    image: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 }];
 
 export const getBlog = () => {

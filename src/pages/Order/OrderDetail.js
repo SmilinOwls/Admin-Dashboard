@@ -68,7 +68,7 @@ function OrderDetail({ actions }) {
         type: 'success',
         content: 'Delete order successfully!',
         duration: 2,
-      }).then(() => navigate('/api/admin/book'));
+      }).then(() => navigate('/api/book'));
     }, 1000);
   };
 
@@ -97,7 +97,7 @@ function OrderDetail({ actions }) {
         className='text-primary mb-3 d-flex align-items-center'
         style={{ cursor: "pointer" }}
       >
-        <ArrowLeftOutlined /><Link to='/api/admin/book' className='ms-2 text-decoration-none'>Back to Order List</Link>
+        <ArrowLeftOutlined /><Link to='/api/book' className='ms-2 text-decoration-none'>Back to Order List</Link>
       </div>
       <h3 className="mb-3">Update Order</h3>
       <div className='row'>

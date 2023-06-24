@@ -1,48 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as UserAction from '../../actions/UserAction';
+import { formItemLayout } from '../../utils/config';
 import { EditOutlined, DeleteOutlined, UploadOutlined, SearchOutlined } from '@ant-design/icons';
 import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button, Select, Tag, Row, Col } from 'antd';
 
 const { Meta } = Card;
-const dataSource = [{
-    key: 1,
-    username: `Name I`,
-    email: 'email1@gmail.com',
-    password: 'password1',
-    phone: '0812431293',
-    role: 'admin',
-    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
 
-},
-{
-    key: 2,
-    username: `Name II`,
-    email: 'email2@gmail.com',
-    password: 'password1',
-    phone: '0812431213',
-    role: 'user',
-    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-},
-{
-    key: 3,
-    username: `Name III`,
-    email: 'email3@gmail.com',
-    password: 'password1',
-    phone: '0812431213',
-    role: 'user',
-    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-},
-{
-    key: 4,
-    username: `Name IV`,
-    email: 'email4@gmail.com',
-    password: 'password1',
-    phone: '0812431213',
-    role: 'admin',
-    img: [{ thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png' }],
-},
-];
-
-function User() {
+function User({ users, actions }) {
     const [form] = Form.useForm();
     const [card, setCard] = useState({});
     const [disabled, setDisabled] = useState(false);
@@ -50,27 +16,16 @@ function User() {
     const [showModal, setShowModal] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [role, setRole] = useState('all');
-    const [data, setData] = useState(dataSource);
-    const [dataClone, setDataClone] = useState(dataSource);
+    const [data, setData] = useState(users);
+    const [dataClone, setDataClone] = useState(users);
 
-    const formItemLayout = {
-        labelCol: {
-            xs: {
-                span: 24
-            },
-            sm: {
-                span: 8
-            }
-        },
-        wrapperCol: {
-            xs: {
-                span: 24
-            },
-            sm: {
-                span: 16
-            }
-        },
-    };
+    useEffect(() => {
+        actions.getUser();
+    }, []);
+
+    useEffect(() => {
+        setData(users);
+    }, [users]);
 
     const normFile = (e) => {
         console.log('Upload event:', e);
@@ -90,41 +45,40 @@ function User() {
 
         setConfirmLoading(true);
         setTimeout(() => {
+            // axios handler goes here (PUT)
             setShowModal(false);
             setConfirmLoading(false);
-            const newData = [...data];
-            const index = newData.findIndex((item) => card.key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
+            actions.updatePlace(
+                {
                     ...card,
+                    image: card.image[0].originFileObj ? URL.createObjectURL(card.image[0].originFileObj) : card.image
                 });
-
-            } else {
-                newData.push(card);
-            }
-            setData(newData);
-            // axios handler goes here (PUT)
         }, 2000);
     };
 
-    const deleteHandle = (key) => {
-        const newData = data.filter((item) => item.key !== key);
-        setData(newData);
-        // axios handler goes here (DELETE)
+    const deleteHandle = (_id) => {
+
+        actions.deleteUser(_id);
+        setData(users);
+
     };
 
     useEffect(() => {
         if (inputValue.trim()) {
             const newData = [...data];
-            var filteredData = newData.filter(({username, email, phone, }) => `${username}${email}${phone}`.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
-            if(role !== "all"){
-                filteredData = filteredData.filter((item) => item.role === role);
+            var filteredData = newData.filter(({ username, email, phone, }) => `${username}${email}${phone}`.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
+            if (role !== "all") {
+                filteredData = filteredData.filter((item) => {
+                    if(role === "admin") return item.isAdmin === true
+                    else return item.isAdmin === false
+                });
             }
-            setDataClone(filteredData.length === 0? [] : filteredData);
-        } else{
-            setDataClone(role === "all" ? [...data] : data.filter((item) => item.role === role));
+            setDataClone(filteredData.length === 0 ? [] : filteredData);
+        } else {
+            setDataClone(role === "all" ? [...data] : data.filter((item) => {
+                if(role === "admin") return item.isAdmin === true
+                else return item.isAdmin === false
+            }));
         }
     }, [data, role, inputValue]);
 
@@ -161,7 +115,6 @@ function User() {
 
             </Row>
 
-
             <List
                 className='mt-4'
                 grid={{ gutter: 16 }}
@@ -196,18 +149,18 @@ function User() {
                                     }
                                     setShowModal(true);
                                 }} />,
-                                <Popconfirm title="Sure to delete?" onConfirm={() => deleteHandle(item.key)}>
+                                <Popconfirm title="Sure to delete?" onConfirm={() => deleteHandle(item._id)}>
                                     <span style={{ cursor: "pointer" }}><DeleteOutlined /></span>
                                 </Popconfirm>
                             ]}
                         >
                             <Meta
-                                avatar={<Avatar src={item.img[0].thumbUrl || URL.createObjectURL(item.img[0].originFileObj)} />}
+                                avatar={<Avatar src={item.profilePic} />}
                                 title={item.username}
                                 description={item.email}
                             >
                             </Meta>
-                            <Tag color={item.role === "admin" ? "gold" : "blue"} className="ms-5 mt-2" key={item.key}>{item.role.toUpperCase()}</Tag>
+                            <Tag color={item.isAdmin === true ? "gold" : "blue"} className="ms-5 mt-2" key={item._id}>{item.isAdmin ? "ADMIN" : "USER"}</Tag>
                         </Card>
                     </List.Item>
                 )}
@@ -226,8 +179,8 @@ function User() {
                     form={form}
                     style={{ width: 430 }}
                     onValuesChange={(value) => {
-                        if (value.img && value.img.length !== 0) {
-                            setCard({ ...card, img: [{ ...value.img[0] }] })
+                        if (value.img && value.profilePic.length !== 0) {
+                            setCard({ ...card, profilePic: [{ ...value.profilePic[0] }] })
                         } else {
                             setCard({ ...card, ...value });
                         }
@@ -278,7 +231,7 @@ function User() {
                     </Form.Item>
                     <Form.Item
                         name="phone"
-                        label="Phone Number"
+                        label="Phone"
                         rules={[{ required: true, message: 'Please input your Phone number!' }]}
                     >
                         <Input />
@@ -288,22 +241,24 @@ function User() {
                         label="Role"
                         rules={[{ required: true, message: 'Please select your Role!' }]}
                     >
-                        <Select>
+                        <Select defaultValue="user">
                             <Select.Option value="admin">Admin</Select.Option>
                             <Select.Option value="user">User</Select.Option>
                         </Select>
                     </Form.Item>
                     <Form.Item
-                        name="img"
-                        label="Image"
+                        name="profilePic"
+                        label="Profile Pic"
                         valuePropName='fileList'
+                        getValueProps={(value) => ({fileList: [value]})}
                         getValueFromEvent={normFile}
                         rules={[
                             {
                                 required: true,
                                 message: 'Please upload image',
                             },
-                        ]}>
+                        ]}
+                        >
                         <Upload
                             listType='picture'
                             beforeUpload={() => false}
@@ -320,4 +275,19 @@ function User() {
     )
 }
 
-export default User
+const mapStateToProps = state => {
+    return {
+        users: state.users
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators(UserAction, dispatch)
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(User);

@@ -133,7 +133,12 @@ function Blog({ blogs, actions }) {
         // axios handler goes here (PUT)
         try {
             const row = await form.validateFields();
-            actions.updateBlog({ ...row, _id: _id });
+            actions.updateBlog({
+                ...row,
+                _id: _id,
+                image: row.image[0].originFileObj ? URL.createObjectURL(row.image[0].originFileObj) : row.image
+            });
+
             setEditingKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -192,6 +197,7 @@ function Blog({ blogs, actions }) {
                         }}
                         getValueFromEvent={dataIndex === "image" ? normfile : null}
                         valuePropName={dataIndex === "image" ? "fileList" : "value"}
+                        getValueProps={(value) => ({ value: ["image"].includes(dataIndex) ? [value] : value })}
                         rules={[
                             {
                                 required: true,
@@ -237,10 +243,9 @@ function Blog({ blogs, actions }) {
             render: (imgs, _) => {
                 return (
                     <div className='row'>
-                        {imgs.map((img, idx) =>
-                            <div className='col-3 me-2' key={idx}>
-                                <Image className='me-2' width={50} height={50} src={img.thumbUrl} />
-                            </div>)}
+                        <div className='col-3 me-2'>
+                            <Image className='me-2' width={50} height={50} src={imgs} />
+                        </div>
                     </div>
                 )
             }

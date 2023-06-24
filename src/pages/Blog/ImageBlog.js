@@ -20,6 +20,7 @@ function ImageBlog({ formData, setFormData }) {
                 onPreview={(file) => { setImagePreview(file); setOpen(true); }}
                 beforeUpload={() => false}
                 onChange={handleUpload}
+                maxCount={1}
             >
                 <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>

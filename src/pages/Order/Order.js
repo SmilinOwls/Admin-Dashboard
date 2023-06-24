@@ -66,7 +66,7 @@ function Order({ orders, actions }) {
                                 </div>}
                             actions={[
                                 <EditOutlined onClick={() => {
-                                    navigate(`/api/admin/book/${item._id}`, { state: { order: item } });
+                                    navigate(`/api/book/admin/${item._id}`, { state: { order: item } });
                                 }}></EditOutlined>
                                 ,
                                 <Popconfirm title="Sure to delete?" onConfirm={() => actions.deleteOrder(item._id)}>
