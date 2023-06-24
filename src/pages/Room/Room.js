@@ -123,8 +123,10 @@ function Room({ rooms, actions }) {
     }, [rooms]);
 
     const edit = (record) => {
+        console.log(record);
         form.setFieldsValue({
             ...record,
+            photos: record.photos.map((photo, idx) => ({uid: idx, url: photo})),
         });
         setEditingKey(record._id);
     };
@@ -209,7 +211,11 @@ function Room({ rooms, actions }) {
                         getValueProps={(value) => {
                             if (["checkIn", "checkOut"].includes(dataIndex)) {
                                 return { value: dayjs(value) }
-                            } 
+                            } else{
+                                if (["photos"].includes(dataIndex)) {
+                                    return { fileList: value }
+                                } 
+                            }
                             return { value: value }
                         }}
                         rules={[

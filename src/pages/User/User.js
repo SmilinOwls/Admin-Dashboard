@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import * as UserAction from '../../actions/UserAction';
 import { formItemLayout } from '../../utils/config';
 import { EditOutlined, DeleteOutlined, UploadOutlined, SearchOutlined } from '@ant-design/icons';
-import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button, Select, Tag, Row, Col } from 'antd';
+import { List, Card, Avatar, Modal, Popconfirm, Form, Input, Upload, Button, Select, Tag, Row, Col, message } from 'antd';
 
 const { Meta } = Card;
 
@@ -18,6 +18,7 @@ function User({ users, actions }) {
     const [role, setRole] = useState('all');
     const [data, setData] = useState(users);
     const [dataClone, setDataClone] = useState(users);
+    const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
         actions.getUser();
@@ -44,16 +45,35 @@ function User({ users, actions }) {
         }
 
         setConfirmLoading(true);
-        setTimeout(() => {
-            // axios handler goes here (PUT)
-            setShowModal(false);
-            setConfirmLoading(false);
-            actions.updatePlace(
-                {
-                    ...card,
-                    image: card.image[0].originFileObj ? URL.createObjectURL(card.image[0].originFileObj) : card.image
+
+        // axios handler goes here (PUT)
+
+        const isAdmin = card.role === "admin";
+        const user = {...card};
+        delete user["role"];
+        user.isAdmin = isAdmin;
+
+        try {
+            setTimeout(() => {
+                actions.updateUser(
+                    {
+                        ...user,
+                        profilePic: card.profilePic[0].originFileObj ? URL.createObjectURL(card.profilePic[0].originFileObj) : card.profilePic
+                    });
+                setConfirmLoading(false);
+                messageApi.open({
+                    type: 'success',
+                    content: 'Successfully update user!',
                 });
-        }, 2000);
+                setShowModal(false);
+            }, 2000);
+        } catch (error) {
+            messageApi.open({
+                type: 'error',
+                content: 'Error to update user!',
+            });
+            throw error;
+        }
     };
 
     const deleteHandle = (_id) => {
@@ -69,14 +89,14 @@ function User({ users, actions }) {
             var filteredData = newData.filter(({ username, email, phone, }) => `${username}${email}${phone}`.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1);
             if (role !== "all") {
                 filteredData = filteredData.filter((item) => {
-                    if(role === "admin") return item.isAdmin === true
+                    if (role === "admin") return item.isAdmin === true
                     else return item.isAdmin === false
                 });
             }
             setDataClone(filteredData.length === 0 ? [] : filteredData);
         } else {
             setDataClone(role === "all" ? [...data] : data.filter((item) => {
-                if(role === "admin") return item.isAdmin === true
+                if (role === "admin") return item.isAdmin === true
                 else return item.isAdmin === false
             }));
         }
@@ -93,6 +113,7 @@ function User({ users, actions }) {
 
     return (
         <div className='mt-3'>
+            {contextHolder}
             <h3 className='my-2'>User List</h3>
             <Row style={{ width: '100%' }} className="mt-3 align-items-center">
                 <Col span={2}><b>Search: </b> </Col>
@@ -143,6 +164,8 @@ function User({ users, actions }) {
                                         setDisabled(false);
                                         form.setFieldsValue({
                                             ...item,
+                                            profilePic: [{uid: '-1', url: item.profilePic}],
+                                            role: item.isAdmin ? "admin" : "user"
                                         });
                                     } catch (e) {
 
@@ -186,6 +209,11 @@ function User({ users, actions }) {
                         }
                     }}
                     disabled={disabled}
+                    initialValues={
+                        {
+                            role: "User"
+                        }
+                    }
                     scrollToFirstError
                 >
                     <Form.Item
@@ -241,7 +269,7 @@ function User({ users, actions }) {
                         label="Role"
                         rules={[{ required: true, message: 'Please select your Role!' }]}
                     >
-                        <Select defaultValue="user">
+                        <Select>
                             <Select.Option value="admin">Admin</Select.Option>
                             <Select.Option value="user">User</Select.Option>
                         </Select>
@@ -250,7 +278,6 @@ function User({ users, actions }) {
                         name="profilePic"
                         label="Profile Pic"
                         valuePropName='fileList'
-                        getValueProps={(value) => ({fileList: [value]})}
                         getValueFromEvent={normFile}
                         rules={[
                             {
@@ -258,7 +285,7 @@ function User({ users, actions }) {
                                 message: 'Please upload image',
                             },
                         ]}
-                        >
+                    >
                         <Upload
                             listType='picture'
                             beforeUpload={() => false}

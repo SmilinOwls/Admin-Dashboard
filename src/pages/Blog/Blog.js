@@ -123,6 +123,7 @@ function Blog({ blogs, actions }) {
     const edit = (record) => {
         form.setFieldsValue({
             ...record,
+            image: [{uid: '-1', url: record.image}],
         });
         setEditingKey(record._id);
     };
@@ -197,7 +198,6 @@ function Blog({ blogs, actions }) {
                         }}
                         getValueFromEvent={dataIndex === "image" ? normfile : null}
                         valuePropName={dataIndex === "image" ? "fileList" : "value"}
-                        getValueProps={(value) => ({ value: ["image"].includes(dataIndex) ? [value] : value })}
                         rules={[
                             {
                                 required: true,

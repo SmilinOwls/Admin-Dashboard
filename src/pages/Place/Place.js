@@ -123,6 +123,7 @@ function Place({ places, actions }) {
     const edit = (record) => {
         form.setFieldsValue({
             ...record,
+            placePic: [{uid: '-1', url: record.placePic}],
         });
         setEditingKey(record._id);
     };
@@ -199,7 +200,6 @@ function Place({ places, actions }) {
                         }}
                         getValueFromEvent={dataIndex === "placePic" ? normfile : null}
                         valuePropName={dataIndex === "placePic" ? "fileList" : "value"}
-                        getValueProps={(value) => ({ value: ["placePic"].includes(dataIndex) ? [value] : value })}
                         rules={[
                             {
                                 required: true,
