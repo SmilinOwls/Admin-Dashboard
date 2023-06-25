@@ -132,7 +132,7 @@ function MainLayout() {
                     <Link
                       className="dropdown-item py-1 mb-1 z-2"
                       style={{ height: "auto", lineHeight: "20px" }}
-                      to="/signout"
+                      to="/logout"
                     >
                       Signout
                     </Link>

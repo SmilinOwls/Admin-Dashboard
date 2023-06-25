@@ -27,7 +27,7 @@ const dataSource = [{
   orderStatus: "Processing",
   taxPrice: 0,
   totalPrice: 10,
-  paidAt: '06/12/2023 12:00',
+  paidAt: '04/12/2023 12:00',
 },
 {
   _id: '2',
@@ -54,8 +54,8 @@ const dataSource = [{
   numOfGuest: 1,
   orderStatus: "Processing",
   taxPrice: 0,
-  totalPrice: 10,
-  paidAt: '06/12/2023 12:00',
+  totalPrice: 80,
+  paidAt: '05/12/2023 12:00',
 },
 {
   _id: '3',
@@ -83,8 +83,8 @@ const dataSource = [{
   numOfGuest: 1,
   orderStatus: "Approval",
   taxPrice: 0,
-  totalPrice: 10,
-  paidAt: '6/12/2023 12:00'
+  totalPrice: 52,
+  paidAt: '06/12/2023 12:00'
 },
 ];
 
